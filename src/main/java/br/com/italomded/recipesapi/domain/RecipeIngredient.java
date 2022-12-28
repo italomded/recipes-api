@@ -13,9 +13,9 @@ public class RecipeIngredient {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long ID;
 
-    @Column(nullable = false) @ManyToOne
+    @JoinColumn(nullable = false) @ManyToOne
     private Recipe recipe;
-    @Column(nullable = false) @ManyToOne
+    @JoinColumn(nullable = false) @ManyToOne
     private Ingredient ingredient;
 
     @Embedded

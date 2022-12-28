@@ -1,0 +1,14 @@
+spring:
+  datasource:
+    password: 12345
+    url: jdbc:mysql://localhost:3306/recipes_db
+    username: root
+    driverClassName: com.mysql.cj.jdbc.Driver
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    defer-datasource-initialization: true
+  sql:
+    init:
+      mode: always

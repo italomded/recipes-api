@@ -20,7 +20,7 @@ public class Ingredient {
     @Column(nullable = false) @OneToMany(mappedBy = "ingredient", orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<RecipeIngredient> recipesThatUse;
 
-    @Column(nullable = false, length = 25)
+    @Column(nullable = false, length = 25, unique = true)
     private String name;
     @Column(nullable = false) @Enumerated(EnumType.STRING)
     private TypeOfIngredient category;
