@@ -1,11 +1,8 @@
-package br.com.italomded.recipesapi.domain;
+package com.github.italomded.recipesapi.domain;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Fetch;
-import org.springframework.data.util.Lazy;
 
 import java.util.HashSet;
 import java.util.Set;

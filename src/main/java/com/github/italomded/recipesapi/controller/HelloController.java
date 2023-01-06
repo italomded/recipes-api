@@ -1,4 +1,4 @@
-package br.com.italomded.recipesapi.controller;
+package com.github.italomded.recipesapi.controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

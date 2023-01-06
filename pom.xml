@@ -8,9 +8,9 @@
 		<version>3.0.0</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>br.com.italomded</groupId>
+	<groupId>com.github.italomded</groupId>
 	<artifactId>recipes-api</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0</version>
 	<name>recipes-api</name>
 	<description>Demo project for Spring Boot</description>
 	<properties>

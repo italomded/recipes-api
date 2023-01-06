@@ -1,7 +1,6 @@
-package br.com.italomded.recipesapi.domain;
+package com.github.italomded.recipesapi.domain;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 

@@ -1,4 +1,4 @@
-package br.com.italomded.recipesapi.domain;
+package com.github.italomded.recipesapi.domain;
 
 public enum Measure {
     TEASPON,
