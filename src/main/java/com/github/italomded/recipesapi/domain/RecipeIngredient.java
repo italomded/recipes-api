@@ -6,7 +6,6 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
-@AllArgsConstructor
 @EqualsAndHashCode(of = {"ID"})
 @Entity(name = "recipe_ingredient")
 public class RecipeIngredient {
@@ -33,5 +32,6 @@ public class RecipeIngredient {
         this.quantity = quantity;
         this.instruction = instruction;
         this.prepareMinutes = prepareMinutes;
+        this.sequence = sequence;
     }
 }
