@@ -59,13 +59,19 @@ public class RecipeTest {
         recipeIngredientID.set(recipeIngredient2, 5L);
         recipeIngredient2.setSequence(37);
 
+        RecipeIngredient recipeIngredient3 = new RecipeIngredient();
+        recipeIngredientID.set(recipeIngredient3, 6L);
+
         recipe.addRecipeIngredient(recipeIngredient1);
         recipe.addRecipeIngredient(recipeIngredient2);
+        recipe.addRecipeIngredient(recipeIngredient3);
 
-        Assertions.assertEquals(5, recipe.getIngredientsOfRecipe().size());
+        Assertions.assertEquals(6, recipe.getIngredientsOfRecipe().size());
         Assertions.assertEquals(recipeIngredient1, recipe.getIngredientsOfRecipe().get(3));
         Assertions.assertEquals(recipeIngredient2, recipe.getIngredientsOfRecipe().get(4));
         Assertions.assertEquals(5, recipe.getIngredientsOfRecipe().get(4).getSequence());
+        Assertions.assertEquals(6, recipe.getIngredientsOfRecipe().get(5).getSequence());
+
     }
 
     @Test
@@ -93,5 +99,13 @@ public class RecipeTest {
             System.out.println(recipeIngredient.getSequence());
         }
         Assertions.assertEquals(21, counter);
+    }
+
+    @Test
+    void shouldAddWithSequenceOneIfListOfRecipeIngredientsIsNull() {
+        Recipe recipeEmpty = new Recipe();
+        recipeEmpty.addRecipeIngredient(new RecipeIngredient());
+        Assertions.assertEquals(1, recipeEmpty.getIngredientsOfRecipe().size());
+        Assertions.assertEquals(1, recipeEmpty.getIngredientsOfRecipe().get(0).getSequence());
     }
 }

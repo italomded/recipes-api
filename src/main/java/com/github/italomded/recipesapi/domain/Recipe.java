@@ -62,7 +62,7 @@ public class Recipe {
 
     public void addRecipeIngredient(RecipeIngredient recipeIngredient) {
         int amountOfIngredients = ingredientsOfRecipe.size();
-        if (recipeIngredient.getSequence() > amountOfIngredients) {
+        if (recipeIngredient.getSequence() == null || recipeIngredient.getSequence() > amountOfIngredients) {
             recipeIngredient.setSequence(amountOfIngredients + 1);
         } else {
             for (RecipeIngredient ri : ingredientsOfRecipe) {
