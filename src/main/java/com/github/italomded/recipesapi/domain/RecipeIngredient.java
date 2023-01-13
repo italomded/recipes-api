@@ -24,6 +24,14 @@ public class RecipeIngredient {
     @Column(nullable = false) @Getter @Setter
     private Integer sequence;
 
+    public RecipeIngredient(Recipe recipe, Ingredient ingredient, Quantity quantity, String instruction, Integer prepareMinutes) {
+        this.recipe = recipe;
+        this.ingredient = ingredient;
+        this.quantity = quantity;
+        this.instruction = instruction;
+        this.prepareMinutes = prepareMinutes;
+    }
+
     public RecipeIngredient(Recipe recipe, Ingredient ingredient, Quantity quantity, String instruction, Integer prepareMinutes, Integer sequence) {
         this.recipe = recipe;
         this.ingredient = ingredient;

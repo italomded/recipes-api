@@ -12,5 +12,5 @@ public record RecipeCreateForm (
         @NotBlank
         String description,
         @Size(min = 3) // TODO: annotation to verify sequence order
-        RecipeIngredientCreateForm[] ingredients
+        RecipeIngredientCreateWithRecipeForm[] ingredients
 ) { }

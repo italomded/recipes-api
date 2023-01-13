@@ -4,10 +4,13 @@ import lombok.Getter;
 
 public class EntityDoesNotExistException extends RuntimeException {
     @Getter
-    private String label;
+    private Long id;
+    @Getter
+    private Class<?> exceptionDomainClass;
 
-    public EntityDoesNotExistException(String message, String label) {
-        super(message);
-        this.label = label;
+    public EntityDoesNotExistException(Class<?> exceptionDomainClass, Long id) {
+        super("Non-existent id");
+        this.id = id;
+        this.exceptionDomainClass = exceptionDomainClass;
     }
 }

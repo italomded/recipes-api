@@ -1,10 +1,7 @@
 package com.github.italomded.recipesapi.service;
 
 import com.github.italomded.recipesapi.domain.*;
-import com.github.italomded.recipesapi.dto.form.ImageForm;
-import com.github.italomded.recipesapi.dto.form.RecipeCreateForm;
-import com.github.italomded.recipesapi.dto.form.RecipeEditForm;
-import com.github.italomded.recipesapi.dto.form.RecipeIngredientCreateForm;
+import com.github.italomded.recipesapi.dto.form.*;
 import com.github.italomded.recipesapi.repository.ApplicationUserRepository;
 import com.github.italomded.recipesapi.repository.IngredientRepository;
 import com.github.italomded.recipesapi.repository.RecipeRepository;
@@ -45,7 +42,7 @@ public class RecipeService {
         // TODO: verify if request user is the author of the recipe
         Optional<Recipe> optionalRecipe = getRecipeById(recipeID);
         if (optionalRecipe.isEmpty()) {
-            throw new EntityDoesNotExistException("Non-existent ingredient id", recipeID.getClass().getName());
+            throw new EntityDoesNotExistException(Recipe.class, recipeID);
         }
 
         Recipe recipe = optionalRecipe.get();
@@ -65,16 +62,18 @@ public class RecipeService {
             recipe.addImage(image);
         }
 
-        for (RecipeIngredientCreateForm recipeIngredientForm : form.ingredients()) {
+        for (RecipeIngredientCreateWithRecipeForm recipeIngredientForm : form.ingredients()) {
             Optional<Ingredient> optionalIngredient = ingredientRepository.findById(recipeIngredientForm.ingredientID());
             if (optionalIngredient.isEmpty()) {
-                throw new EntityDoesNotExistException("Non-existent ingredient id", recipeIngredientForm.ingredientID().getClass().getName());
+                throw new EntityDoesNotExistException(Ingredient.class, recipeIngredientForm.ingredientID());
             }
             Quantity quantity = new Quantity(recipeIngredientForm.amount(), recipeIngredientForm.measure());
+            Ingredient ingredient = optionalIngredient.get();
             RecipeIngredient recipeIngredient = new RecipeIngredient(
-                    recipe, optionalIngredient.get(), quantity, recipeIngredientForm.instruction(),
-                    recipeIngredientForm.prepareMinutes(), recipeIngredientForm.sequence()
+                    recipe, ingredient, quantity, recipeIngredientForm.instruction(),
+                    recipeIngredientForm.prepareMinutes()
             );
+            ingredient.addRecipeIngredient(recipeIngredient);
             recipe.addRecipeIngredient(recipeIngredient);
         }
 
@@ -87,7 +86,7 @@ public class RecipeService {
         // TODO: verify if request user is the author of the recipe
         Optional<Recipe> optionalRecipe = recipeRepository.findById(recipeID);
         if (optionalRecipe.isEmpty()) {
-            throw new EntityDoesNotExistException("Non-existent recipe id", recipeID.getClass().getName());
+            throw new EntityDoesNotExistException(Recipe.class, recipeID);
         }
         Recipe recipe = optionalRecipe.get();
         recipeRepository.delete(recipe);

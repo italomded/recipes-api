@@ -4,6 +4,7 @@ import com.github.italomded.recipesapi.domain.*;
 import com.github.italomded.recipesapi.dto.form.ImageForm;
 import com.github.italomded.recipesapi.dto.form.RecipeCreateForm;
 import com.github.italomded.recipesapi.dto.form.RecipeIngredientCreateForm;
+import com.github.italomded.recipesapi.dto.form.RecipeIngredientCreateWithRecipeForm;
 import com.github.italomded.recipesapi.repository.ApplicationUserRepository;
 import com.github.italomded.recipesapi.repository.IngredientRepository;
 import com.github.italomded.recipesapi.repository.RecipeRepository;
@@ -85,10 +86,10 @@ public class RecipeServiceTest {
         ImageForm[] images = {
                 new ImageForm("0x12345".getBytes()), new ImageForm("0x12345".getBytes()), new ImageForm("0x12345".getBytes())
         };
-        RecipeIngredientCreateForm[] recipeIngredients = {
-                new RecipeIngredientCreateForm(1L, 50.0, Measure.G, "Do this and do that", 5, 1),
-                new RecipeIngredientCreateForm(2L, 2.0, Measure.KG, "Do this and do that", 5, 2),
-                new RecipeIngredientCreateForm(3L, 20.0, Measure.MG, "Do this and do that", 5, 3)
+        RecipeIngredientCreateWithRecipeForm[] recipeIngredients = {
+                new RecipeIngredientCreateWithRecipeForm(1L, 50.0, Measure.G, "Do this and do that", 5),
+                new RecipeIngredientCreateWithRecipeForm(2L, 2.0, Measure.KG, "Do this and do that", 5),
+                new RecipeIngredientCreateWithRecipeForm(3L, 20.0, Measure.MG, "Do this and do that", 5)
         };
         return new RecipeCreateForm(images, "Simple title", "Simple description", recipeIngredients);
     }

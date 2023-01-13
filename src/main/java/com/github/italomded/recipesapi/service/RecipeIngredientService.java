@@ -32,7 +32,7 @@ public class RecipeIngredientService {
         this.ingredientRepository = ingredientRepository;
     }
 
-    public Page<RecipeService> getRecipeIngredientsByRecipeId(Pageable pageable, Long recipeID) {
+    public Page<RecipeIngredient> getRecipeIngredientsByRecipeId(Pageable pageable, Long recipeID) {
         return recipeIngredientRepository.findByRecipe_ID(recipeID, pageable);
     }
 
@@ -40,7 +40,7 @@ public class RecipeIngredientService {
         // TODO: verify if request user is the author of the recipe
         Optional<RecipeIngredient> optionalRecipeIngredient = recipeIngredientRepository.findById(recipeIngredientID);
         if (optionalRecipeIngredient.isEmpty()) {
-            throw new EntityDoesNotExistException("Non-existent recipe ingredient id", recipeIngredientID.getClass().getName());
+            throw new EntityDoesNotExistException(RecipeIngredient.class, recipeIngredientID);
         }
 
         RecipeIngredient recipeIngredient = optionalRecipeIngredient.get();
@@ -58,19 +58,20 @@ public class RecipeIngredientService {
         // TODO: verify if request user is the author of the recipe
         Optional<Recipe> optionalRecipe = recipeRepository.findById(recipeID);
         if (optionalRecipe.isEmpty()) {
-            throw new EntityDoesNotExistException("Non-existent recipe id", recipeID.getClass().getName());
+            throw new EntityDoesNotExistException(Recipe.class, recipeID);
         }
         Optional<Ingredient> optionalIngredient = ingredientRepository.findById(form.ingredientID());
         if (optionalIngredient.isEmpty()) {
-            throw new EntityDoesNotExistException("Non-existent ingredient id", form.ingredientID().getClass().getName());
+            throw new EntityDoesNotExistException(Ingredient.class, form.ingredientID());
         }
 
         Recipe recipe = optionalRecipe.get();
         Quantity quantity = new Quantity(form.amount(), form.measure());
+        Ingredient ingredient = optionalIngredient.get();
         RecipeIngredient recipeIngredient = new RecipeIngredient(
-                recipe, optionalIngredient.get(), quantity, form.instruction(), form.prepareMinutes(), form.sequence()
+                recipe, ingredient, quantity, form.instruction(), form.prepareMinutes(), form.sequence()
                 );
-
+        ingredient.addRecipeIngredient(recipeIngredient);
         recipe.addRecipeIngredient(recipeIngredient);
 
         recipeIngredient = recipeIngredientRepository.save(recipeIngredient);
@@ -83,7 +84,7 @@ public class RecipeIngredientService {
         // TODO: verify if request user is the author of the recipe
         Optional<RecipeIngredient> optionalRecipeIngredient = recipeIngredientRepository.findById(recipeIngredientID);
         if (optionalRecipeIngredient.isEmpty()) {
-            throw new EntityDoesNotExistException("Non-existent recipe ingredient id", recipeIngredientID.getClass().getName());
+            throw new EntityDoesNotExistException(RecipeIngredient.class, recipeIngredientID);
         }
 
         RecipeIngredient recipeIngredient = optionalRecipeIngredient.get();
