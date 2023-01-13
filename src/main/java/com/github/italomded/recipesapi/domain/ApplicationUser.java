@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @EqualsAndHashCode(of = {"ID"})
@@ -19,7 +20,7 @@ public class ApplicationUser {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "recipe_id")
     )
-    private Set<Recipe> likedRecipes;
+    private Set<Recipe> likedRecipes = new HashSet<>();
     @OneToMany(mappedBy = "creatorUser", orphanRemoval = true, fetch = FetchType.LAZY)
-    private Set<Recipe> recipesCreated;
+    private Set<Recipe> recipesCreated  = new HashSet<>();
 }

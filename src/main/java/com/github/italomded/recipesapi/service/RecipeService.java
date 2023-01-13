@@ -42,6 +42,7 @@ public class RecipeService {
     }
 
     public Long editRecipe(Long recipeID, RecipeEditForm form) {
+        // TODO: verify if request user is the author of the recipe
         Optional<Recipe> optionalRecipe = getRecipeById(recipeID);
         if (optionalRecipe.isEmpty()) {
             throw new EntityDoesNotExistException("Non-existent ingredient id", recipeID.getClass().getName());
@@ -55,7 +56,8 @@ public class RecipeService {
     }
 
     public Long createRecipe(RecipeCreateForm form) {
-        ApplicationUser user = applicationUserRepository.findById(1l).get(); // Change
+        // TODO: set request author user as recipe creator
+        ApplicationUser user = applicationUserRepository.findById(1L).get(); // TODO: delete this line
 
         Recipe recipe = new Recipe(form.title(), form.description());
         for (ImageForm imageForm : form.images()) {
@@ -79,5 +81,15 @@ public class RecipeService {
         recipe.setCreatorUser(user);
         recipe = recipeRepository.save(recipe);
         return recipe.getID();
+    }
+
+    public void deleteRecipe(Long recipeID) {
+        // TODO: verify if request user is the author of the recipe
+        Optional<Recipe> optionalRecipe = recipeRepository.findById(recipeID);
+        if (optionalRecipe.isEmpty()) {
+            throw new EntityDoesNotExistException("Non-existent recipe id", recipeID.getClass().getName());
+        }
+        Recipe recipe = optionalRecipe.get();
+        recipeRepository.delete(recipe);
     }
 }

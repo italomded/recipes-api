@@ -15,30 +15,41 @@ import java.util.Set;
 @EqualsAndHashCode(of = {"ID"})
 @Entity(name = "recipe")
 public class Recipe {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY) @Getter
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Getter
     private Long ID;
 
-    @JoinColumn(nullable = false) @ManyToOne @Getter @Setter
+    @JoinColumn(nullable = false)
+    @ManyToOne
+    @Getter
+    @Setter
     private ApplicationUser creatorUser;
 
-    @Column(nullable = false) @OneToMany(mappedBy = "recipe",orphanRemoval = true, fetch = FetchType.LAZY)
-    private Set<Image> images;
-    @Column(nullable = false, length = 50) @Getter @Setter
+    @Column(nullable = false)
+    @OneToMany(mappedBy = "recipe", orphanRemoval = true, fetch = FetchType.LAZY)
+    @Getter
+    private Set<Image> images = new HashSet<>();
+    @Column(nullable = false, length = 50)
+    @Getter
+    @Setter
     private String title;
-    @Column(length = 500) @Getter @Setter
+    @Column(length = 500)
+    @Getter
+    @Setter
     private String description;
 
-    @Column(nullable = false) @OneToMany(mappedBy = "recipe", orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<RecipeIngredient> ingredientsOfRecipe;
+    @Column(nullable = false)
+    @OneToMany(mappedBy = "recipe", orphanRemoval = true, fetch = FetchType.LAZY)
+    @Getter
+    private List<RecipeIngredient> ingredientsOfRecipe = new ArrayList<>();
     @ManyToMany(mappedBy = "likedRecipes", fetch = FetchType.LAZY)
-    private Set<ApplicationUser> usersWhoLiked;
+    private Set<ApplicationUser> usersWhoLiked = new HashSet<>();
 
     public Recipe(String title, String description) {
         this.images = new HashSet<>();
         this.title = title;
         this.description = description;
-        this.ingredientsOfRecipe = new ArrayList<>();
-        this.usersWhoLiked = new HashSet<>();
     }
 
     public void addImage(Image image) {
@@ -50,10 +61,25 @@ public class Recipe {
     }
 
     public void addRecipeIngredient(RecipeIngredient recipeIngredient) {
+        int amountOfIngredients = ingredientsOfRecipe.size();
+        if (recipeIngredient.getSequence() > amountOfIngredients) {
+            recipeIngredient.setSequence(amountOfIngredients + 1);
+        } else {
+            for (RecipeIngredient ri : ingredientsOfRecipe) {
+                if (ri.getSequence() >= recipeIngredient.getSequence()) {
+                    ri.setSequence(ri.getSequence() + 1);
+                }
+            }
+        }
         ingredientsOfRecipe.add(recipeIngredient);
     }
 
     public void removeRecipeIngredient(RecipeIngredient recipeIngredient) {
+        for (RecipeIngredient ri : ingredientsOfRecipe) {
+            if (ri.getSequence() > recipeIngredient.getSequence()) {
+                ri.setSequence(ri.getSequence() - 1);
+            }
+        }
         ingredientsOfRecipe.remove(recipeIngredient);
     }
 
@@ -63,5 +89,9 @@ public class Recipe {
 
     public void removeLike(ApplicationUser applicationUser) {
         usersWhoLiked.remove(applicationUser);
+    }
+
+    public Integer getLikes() {
+        return usersWhoLiked.size();
     }
 }

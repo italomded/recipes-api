@@ -1,17 +1,15 @@
 package com.github.italomded.recipesapi.domain;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
 @Embeddable
 public class Quantity {
-    @Column(nullable = false)
+    @Column(nullable = false) @Getter @Setter
     private Double amount;
-    @Column(nullable = false) @Enumerated(EnumType.STRING)
+    @Column(nullable = false) @Enumerated(EnumType.STRING) @Getter @Setter
     private Measure measure;
 }
