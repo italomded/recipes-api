@@ -2,6 +2,7 @@ package com.github.italomded.recipesapi.domain;
 
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.HashSet;
@@ -11,7 +12,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Entity(name = "user")
 public class ApplicationUser {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY) @Getter
     private Long ID;
 
     @ManyToMany(fetch = FetchType.LAZY)

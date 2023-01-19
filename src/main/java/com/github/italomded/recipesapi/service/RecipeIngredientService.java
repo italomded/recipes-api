@@ -89,7 +89,7 @@ public class RecipeIngredientService {
 
         RecipeIngredient recipeIngredient = optionalRecipeIngredient.get();
         Recipe recipe = recipeIngredient.getRecipe();
-        if (recipe.getIngredientsOfRecipe().size() == 3) {
+        if (recipe.getIngredientsOfRecipe().size() < 4) {
             throw new BusinessRuleException("Can't delete recipe ingredient because the recipe ingredient list should have at least 3 ingredients");
         }
 

@@ -91,4 +91,8 @@ public class RecipeService {
         Recipe recipe = optionalRecipe.get();
         recipeRepository.delete(recipe);
     }
+
+    public void likeRecipe() {
+        // TODO: receive a user application to give a like
+    }
 }

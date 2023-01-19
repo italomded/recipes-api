@@ -1,20 +1,18 @@
 package com.github.italomded.recipesapi.domain;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class RecipeTest {
     private Recipe recipe;
-    private static Field recipeIngredientID;
+    private Field recipeIngredientID;
 
     @BeforeAll
-    public static void getIdField() throws NoSuchFieldException {
+    public void getIdField() throws NoSuchFieldException {
         recipeIngredientID = RecipeIngredient.class.getDeclaredField("ID");
         recipeIngredientID.setAccessible(true);
     }
@@ -71,7 +69,6 @@ public class RecipeTest {
         Assertions.assertEquals(recipeIngredient2, recipe.getIngredientsOfRecipe().get(4));
         Assertions.assertEquals(5, recipe.getIngredientsOfRecipe().get(4).getSequence());
         Assertions.assertEquals(6, recipe.getIngredientsOfRecipe().get(5).getSequence());
-
     }
 
     @Test

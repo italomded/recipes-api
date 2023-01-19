@@ -24,7 +24,7 @@ public class ImageService {
         this.recipeRepository = recipeRepository;
     }
 
-    public Page<Image> getImagesByRecipeId(Long recipeID, Pageable pageable) {
+    public Page<Image> getImagesByRecipeId(Pageable pageable, Long recipeID) {
         return imageRepository.findByRecipe_ID(recipeID, pageable);
     }
 
@@ -52,12 +52,21 @@ public class ImageService {
         Image image = new Image(form.bytes(), recipe);
         recipe.addImage(image);
 
+        recipeRepository.save(recipe);
         image = imageRepository.save(image);
         return image.getID();
     }
 
     public void deleteImage(Long imageID) {
         // TODO: verify if request user is the author of the recipe
-        imageRepository.deleteById(imageID);
+        Optional<Image> optionalImage = imageRepository.findById(imageID);
+        if (optionalImage.isEmpty()) {
+            throw new EntityDoesNotExistException(Image.class, imageID);
+        }
+
+        Image image = optionalImage.get();
+        image.getRecipe().removeImage(image);
+        recipeRepository.save(image.getRecipe());
+        imageRepository.delete(image);
     }
 }

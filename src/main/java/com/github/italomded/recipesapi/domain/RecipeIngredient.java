@@ -3,7 +3,6 @@ package com.github.italomded.recipesapi.domain;
 import jakarta.persistence.*;
 import lombok.*;
 
-@NoArgsConstructor
 @EqualsAndHashCode(of = {"ID"})
 @Entity(name = "recipe_ingredient")
 public class RecipeIngredient {
@@ -39,5 +38,9 @@ public class RecipeIngredient {
         this.instruction = instruction;
         this.prepareMinutes = prepareMinutes;
         this.sequence = sequence;
+    }
+
+    public RecipeIngredient() {
+        quantity = new Quantity();
     }
 }

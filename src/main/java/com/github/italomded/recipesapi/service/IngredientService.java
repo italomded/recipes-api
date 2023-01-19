@@ -45,14 +45,20 @@ public class IngredientService {
 
         verifyIfIngredientNameAlreadyExists(form);
 
-        Ingredient ingredient = new Ingredient(form.name(), form.type());
+        Ingredient ingredient = optionalIngredient.get();
+        ingredient.setName(form.name());
+        ingredient.setCategory(form.type());
         ingredient = ingredientRepository.save(ingredient);
         return ingredient.getID();
     }
 
     public void deleteIngredient(Long ingredientID) {
         // TODO: verify if user author of request are adm
-        ingredientRepository.deleteById(ingredientID);
+        Optional<Ingredient> optionalIngredient = ingredientRepository.findById(ingredientID);
+        if (optionalIngredient.isEmpty()) {
+            throw new EntityDoesNotExistException(Ingredient.class, ingredientID);
+        }
+        ingredientRepository.delete(optionalIngredient.get());
     }
 
     private void verifyIfIngredientNameAlreadyExists(IngredientForm form) {

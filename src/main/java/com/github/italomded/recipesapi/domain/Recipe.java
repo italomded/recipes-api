@@ -6,10 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @NoArgsConstructor
 @EqualsAndHashCode(of = {"ID"})
@@ -28,7 +25,6 @@ public class Recipe {
 
     @Column(nullable = false)
     @OneToMany(mappedBy = "recipe", orphanRemoval = true, fetch = FetchType.LAZY)
-    @Getter
     private Set<Image> images = new HashSet<>();
     @Column(nullable = false, length = 50)
     @Getter
@@ -41,7 +37,6 @@ public class Recipe {
 
     @Column(nullable = false)
     @OneToMany(mappedBy = "recipe", orphanRemoval = true, fetch = FetchType.LAZY)
-    @Getter
     private List<RecipeIngredient> ingredientsOfRecipe = new ArrayList<>();
     @ManyToMany(mappedBy = "likedRecipes", fetch = FetchType.LAZY)
     private Set<ApplicationUser> usersWhoLiked = new HashSet<>();
@@ -52,12 +47,20 @@ public class Recipe {
         this.description = description;
     }
 
+    public Set<Image> getImages() {
+        return Collections.unmodifiableSet(images);
+    }
+
     public void addImage(Image image) {
         images.add(image);
     }
 
     public void removeImage(Image image) {
         images.remove(image);
+    }
+
+    public List<RecipeIngredient> getIngredientsOfRecipe() {
+        return Collections.unmodifiableList(ingredientsOfRecipe);
     }
 
     public void addRecipeIngredient(RecipeIngredient recipeIngredient) {
@@ -83,12 +86,9 @@ public class Recipe {
         ingredientsOfRecipe.remove(recipeIngredient);
     }
 
-    public void addLike(ApplicationUser applicationUser) {
-        usersWhoLiked.add(applicationUser);
-    }
-
-    public void removeLike(ApplicationUser applicationUser) {
-        usersWhoLiked.remove(applicationUser);
+    public void likeRecipe(ApplicationUser applicationUser) {
+        boolean removed = usersWhoLiked.remove(applicationUser);
+        if (!removed) usersWhoLiked.add(applicationUser);
     }
 
     public Integer getLikes() {
