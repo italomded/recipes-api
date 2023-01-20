@@ -10,11 +10,9 @@ import com.github.italomded.recipesapi.repository.IngredientRepository;
 import com.github.italomded.recipesapi.repository.RecipeIngredientRepository;
 import com.github.italomded.recipesapi.repository.RecipeRepository;
 import com.github.italomded.recipesapi.service.exception.BusinessRuleException;
-import com.github.italomded.recipesapi.service.exception.EntityDoesNotExistException;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.*;
 import org.mockito.*;
-
-import java.util.Optional;
 
 public class RecipeIngredientServiceTest {
     @Mock
@@ -42,10 +40,10 @@ public class RecipeIngredientServiceTest {
         Ingredient ingredient = new Ingredient();
         RecipeIngredient recipeIngredientWithId = new RecipeIngredient();
 
-        Mockito.when(recipeRepository.findById(Mockito.anyLong()))
-                .thenReturn(Optional.of(recipe));
-        Mockito.when(ingredientRepository.findById(Mockito.anyLong()))
-                .thenReturn(Optional.of(ingredient));
+        Mockito.when(recipeRepository.getReferenceById(Mockito.anyLong()))
+                .thenReturn(recipe);
+        Mockito.when(ingredientRepository.getReferenceById(Mockito.anyLong()))
+                .thenReturn(ingredient);
         Mockito.when(recipeIngredientRepository.save(Mockito.any()))
                 .thenReturn(recipeIngredientWithId);
 
@@ -69,25 +67,20 @@ public class RecipeIngredientServiceTest {
     void shouldThrowAExceptionOnCreateRecipeIngredientIfFatherEntitiesNeededExists() {
         RecipeIngredientCreateForm form = createRecipeIngredientCreateForm();
 
-        Mockito.when(recipeRepository.findById(Mockito.anyLong()))
-                .thenReturn(Optional.empty());
+        Mockito.when(recipeRepository.getReferenceById(Mockito.anyLong()))
+                .thenThrow(EntityNotFoundException.class);
+        Mockito.when(ingredientRepository.getReferenceById(Mockito.anyLong()))
+                .thenThrow(EntityNotFoundException.class);
 
-        Assertions.assertThrows(EntityDoesNotExistException.class, () -> recipeIngredientService.createRecipeIngredient(1L, form));
-
-        Mockito.when(recipeRepository.findById(Mockito.anyLong()))
-                .thenReturn(Optional.of(new Recipe()));
-        Mockito.when(ingredientRepository.findById(Mockito.anyLong()))
-                .thenReturn(Optional.empty());
-
-        Assertions.assertThrows(EntityDoesNotExistException.class, () -> recipeIngredientService.createRecipeIngredient(1L, form));
+        Assertions.assertThrows(EntityNotFoundException.class, () -> recipeIngredientService.createRecipeIngredient(1L, form));
     }
 
     @Test
     void shouldEditRecipeIngredient() {
         RecipeIngredient recipeIngredient = new RecipeIngredient();
 
-        Mockito.when(recipeIngredientRepository.findById(Mockito.anyLong()))
-                .thenReturn(Optional.of(recipeIngredient));
+        Mockito.when(recipeIngredientRepository.getReferenceById(Mockito.anyLong()))
+                .thenReturn(recipeIngredient);
 
         RecipeIngredientEditForm form = createRecipeIngredientEditForm();
         recipeIngredientService.editRecipeIngredient(1L, form);
@@ -101,11 +94,11 @@ public class RecipeIngredientServiceTest {
 
     @Test
     void shouldThrowAExceptionOnEditRecipeIngredientIfIdDoesntExists() {
-        Mockito.when(recipeIngredientRepository.findById(Mockito.anyLong()))
-                .thenReturn(Optional.empty());
+        Mockito.when(recipeIngredientRepository.getReferenceById(Mockito.anyLong()))
+                .thenThrow(EntityNotFoundException.class);
 
         RecipeIngredientEditForm form = createRecipeIngredientEditForm();
-        Assertions.assertThrows(EntityDoesNotExistException.class, () -> recipeIngredientService.editRecipeIngredient(1L, form));
+        Assertions.assertThrows(EntityNotFoundException.class, () -> recipeIngredientService.editRecipeIngredient(1L, form));
     }
 
     @Test
@@ -118,8 +111,8 @@ public class RecipeIngredientServiceTest {
         RecipeIngredient recipeIngredient = new RecipeIngredient(recipe, null, null, null, null);
         recipe.addRecipeIngredient(recipeIngredient);
 
-        Mockito.when(recipeIngredientRepository.findById(Mockito.anyLong()))
-                .thenReturn(Optional.of(recipeIngredient));
+        Mockito.when(recipeIngredientRepository.getReferenceById(Mockito.anyLong()))
+                .thenReturn(recipeIngredient);
 
         recipeIngredientService.deleteRecipeIngredient(1L);
 
@@ -130,10 +123,10 @@ public class RecipeIngredientServiceTest {
 
     @Test
     void shouldThrowAExceptionOnDeleteARecipeIngredientIfIdDoesntExist() {
-        Mockito.when(recipeIngredientRepository.findById(Mockito.anyLong()))
-                .thenReturn(Optional.empty());
+        Mockito.when(recipeIngredientRepository.getReferenceById(Mockito.anyLong()))
+                .thenThrow(EntityNotFoundException.class);
 
-        Assertions.assertThrows(EntityDoesNotExistException.class, () -> recipeIngredientService.deleteRecipeIngredient(1L));
+        Assertions.assertThrows(EntityNotFoundException.class, () -> recipeIngredientService.deleteRecipeIngredient(1L));
     }
 
     @Test
@@ -144,8 +137,8 @@ public class RecipeIngredientServiceTest {
         RecipeIngredient recipeIngredient = new RecipeIngredient(recipe, null, null, null, null);
         recipe.addRecipeIngredient(recipeIngredient);
 
-        Mockito.when(recipeIngredientRepository.findById(Mockito.anyLong()))
-                .thenReturn(Optional.of(recipeIngredient));
+        Mockito.when(recipeIngredientRepository.getReferenceById(Mockito.anyLong()))
+                .thenReturn(recipeIngredient);
 
         Assertions.assertThrows(BusinessRuleException.class, () -> recipeIngredientService.deleteRecipeIngredient(1L));
     }

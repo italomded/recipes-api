@@ -37,7 +37,7 @@ public class Recipe {
 
     @Column(nullable = false)
     @OneToMany(mappedBy = "recipe", orphanRemoval = true, fetch = FetchType.LAZY)
-    private Set<RecipeIngredient> ingredientsOfRecipe = new HashSet<>();
+    private List<RecipeIngredient> ingredientsOfRecipe = new ArrayList<>();
     @ManyToMany(mappedBy = "likedRecipes", fetch = FetchType.LAZY)
     private Set<ApplicationUser> usersWhoLiked = new HashSet<>();
 
@@ -59,8 +59,8 @@ public class Recipe {
         images.remove(image);
     }
 
-    public Set<RecipeIngredient> getIngredientsOfRecipe() {
-        return Collections.unmodifiableSet(ingredientsOfRecipe);
+    public List<RecipeIngredient> getIngredientsOfRecipe() {
+        return Collections.unmodifiableList(ingredientsOfRecipe);
     }
 
     public void addRecipeIngredient(RecipeIngredient recipeIngredient) {

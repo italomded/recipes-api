@@ -32,14 +32,12 @@ public class IngredientController {
         return ResponseEntity.ok(allIngredientsDTO);
     }
 
-    @Transactional
     @PutMapping("{id}")
     public ResponseEntity<IngredientDTO> editRecipe(@PathVariable long id, @RequestBody @Valid IngredientForm form) {
         Ingredient ingredient = ingredientService.editIngredient(id, form);
         return ResponseEntity.ok(new IngredientDTO(ingredient));
     }
 
-    @Transactional
     @PostMapping
     public ResponseEntity<IngredientDTO> createIngredient(@RequestBody @Valid IngredientForm form, UriComponentsBuilder uriComponentsBuilder) {
         Ingredient ingredient = ingredientService.createIngredient(form);
@@ -47,7 +45,6 @@ public class IngredientController {
         return ResponseEntity.created(location).body(new IngredientDTO(ingredient));
     }
 
-    @Transactional
     @DeleteMapping("{id}")
     public ResponseEntity deleteIngredient(@PathVariable long id) {
         ingredientService.deleteIngredient(id);

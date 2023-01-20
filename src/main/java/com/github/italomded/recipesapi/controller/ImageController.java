@@ -23,14 +23,12 @@ public class ImageController {
         this.imageService = imageService;
     }
 
-    @Transactional
     @PutMapping("{id}")
     public ResponseEntity<ImageDTO> editImage(@PathVariable long id, @RequestBody @Valid ImageForm form) {
         Image image = imageService.editImage(id, form);
         return ResponseEntity.ok(new ImageDTO(image));
     }
 
-    @Transactional
     @PostMapping("{recipeId}")
     public ResponseEntity<ImageDTO> createImage(@PathVariable long recipeId, @RequestBody @Valid ImageForm form, UriComponentsBuilder uriComponentsBuilder) {
         Image image = imageService.createImage(recipeId, form);
@@ -38,7 +36,6 @@ public class ImageController {
         return ResponseEntity.created(location).body(new ImageDTO(image));
     }
 
-    @Transactional
     @DeleteMapping("{id}")
     public ResponseEntity deleteImage(@PathVariable long id) {
         imageService.deleteImage(id);

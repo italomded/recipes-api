@@ -6,10 +6,10 @@ import java.lang.reflect.Field;
 
 public class DataValidationException extends RuntimeException {
     @Getter
-    private Field label;
+    private Field field;
 
-    public DataValidationException(String message, Field label) {
+    public DataValidationException(String message, Field field) {
         super(message);
-        this.label = label;
+        this.field = field;
     }
 }

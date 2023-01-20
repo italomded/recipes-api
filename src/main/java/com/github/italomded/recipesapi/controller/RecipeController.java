@@ -56,9 +56,8 @@ public class RecipeController {
 
     @GetMapping("{id}")
     public ResponseEntity<RecipeDTO> getRecipe(@PathVariable long id) {
-        Optional<Recipe> optionalRecipe = recipeService.getRecipeById(id);
-        if (optionalRecipe.isEmpty()) return ResponseEntity.badRequest().build();
-        return ResponseEntity.ok(new RecipeDTO(optionalRecipe.get()));
+        Recipe recipe = recipeService.getRecipeById(id);
+        return ResponseEntity.ok(new RecipeDTO(recipe));
     }
 
     @GetMapping("ingredient/{id}")
@@ -75,14 +74,12 @@ public class RecipeController {
         return ResponseEntity.ok(imagesDTO);
     }
 
-    @Transactional
     @PutMapping("{id}")
     public ResponseEntity<RecipeDTO> editRecipe(@PathVariable long id, @RequestBody @Valid RecipeEditForm form) {
         Recipe recipe = recipeService.editRecipe(id, form);
         return ResponseEntity.ok(new RecipeDTO(recipe));
     }
 
-    @Transactional
     @PatchMapping
     public ResponseEntity likeRecipe() {
         // TODO: change
@@ -90,7 +87,6 @@ public class RecipeController {
         return ResponseEntity.ok().build();
     }
 
-    @Transactional
     @PostMapping
     public ResponseEntity<RecipeDTO> createRecipe(@RequestBody @Valid RecipeCreateForm form, UriComponentsBuilder uriComponentsBuilder) {
         Recipe recipe = recipeService.createRecipe(form);
@@ -98,7 +94,6 @@ public class RecipeController {
         return ResponseEntity.created(location).body(new RecipeDTO(recipe));
     }
 
-    @Transactional
     @DeleteMapping("{id}")
     public ResponseEntity deleteRecipe(@PathVariable long id) {
         recipeService.deleteRecipe(id);

@@ -3,9 +3,8 @@ package com.github.italomded.recipesapi.service;
 import com.github.italomded.recipesapi.domain.Ingredient;
 import com.github.italomded.recipesapi.dto.form.IngredientForm;
 import com.github.italomded.recipesapi.repository.IngredientRepository;
-import com.github.italomded.recipesapi.service.exception.BusinessRuleException;
 import com.github.italomded.recipesapi.service.exception.DataValidationException;
-import com.github.italomded.recipesapi.service.exception.EntityDoesNotExistException;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,6 +26,7 @@ public class IngredientService {
         return ingredientRepository.findAll(pageable);
     }
 
+    @Transactional
     public Ingredient createIngredient(IngredientForm form) {
         // TODO: verify if user author of request are adm
         verifyIfIngredientNameAlreadyExists(form);
@@ -36,29 +36,23 @@ public class IngredientService {
         return ingredient;
     }
 
+    @Transactional
     public Ingredient editIngredient(Long ingredientID, IngredientForm form) {
         // TODO: verify if user author of request are adm
-        Optional<Ingredient> optionalIngredient = ingredientRepository.findById(ingredientID);
-        if (optionalIngredient.isEmpty()) {
-            throw new EntityDoesNotExistException(Ingredient.class, ingredientID);
-        }
-
+        Ingredient ingredient = ingredientRepository.getReferenceById(ingredientID);
         verifyIfIngredientNameAlreadyExists(form);
 
-        Ingredient ingredient = optionalIngredient.get();
         ingredient.setName(form.name());
         ingredient.setCategory(form.type());
         ingredient = ingredientRepository.save(ingredient);
         return ingredient;
     }
 
+    @Transactional
     public boolean deleteIngredient(Long ingredientID) {
         // TODO: verify if user author of request are adm
-        Optional<Ingredient> optionalIngredient = ingredientRepository.findById(ingredientID);
-        if (optionalIngredient.isEmpty()) {
-            throw new EntityDoesNotExistException(Ingredient.class, ingredientID);
-        }
-        ingredientRepository.delete(optionalIngredient.get());
+        Ingredient ingredient = ingredientRepository.getReferenceById(ingredientID);
+        ingredientRepository.delete(ingredient);
         return true;
     }
 
@@ -67,7 +61,7 @@ public class IngredientService {
         if (optionalIngredient.isPresent()) {
             try {
                 Field name = form.getClass().getDeclaredField("name");
-                throw new DataValidationException("Ingredient name already exists", name);
+                throw new DataValidationException("ingredient name already exists", name);
             } catch (NoSuchFieldException e) {
                 throw new RuntimeException(e);
             }

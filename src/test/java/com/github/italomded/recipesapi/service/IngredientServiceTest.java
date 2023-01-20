@@ -5,11 +5,10 @@ import com.github.italomded.recipesapi.domain.TypeOfIngredient;
 import com.github.italomded.recipesapi.dto.form.IngredientForm;
 import com.github.italomded.recipesapi.repository.IngredientRepository;
 import com.github.italomded.recipesapi.service.exception.DataValidationException;
-import com.github.italomded.recipesapi.service.exception.EntityDoesNotExistException;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.*;
 import org.mockito.*;
 
-import java.lang.reflect.Field;
 import java.util.Optional;
 
 public class IngredientServiceTest {
@@ -64,8 +63,8 @@ public class IngredientServiceTest {
         Ingredient ingredient = new Ingredient("bread", TypeOfIngredient.CARBOHYDRATES);
         IngredientForm form = new IngredientForm("apple", TypeOfIngredient.FRUITS);
 
-        Mockito.when(ingredientRepository.findById(Mockito.any()))
-                .thenReturn(Optional.of(ingredient));
+        Mockito.when(ingredientRepository.getReferenceById(Mockito.any()))
+                .thenReturn(ingredient);
         Mockito.when(ingredientRepository.save(Mockito.any()))
                 .thenReturn(ingredient);
 
@@ -81,8 +80,8 @@ public class IngredientServiceTest {
         Ingredient ingredient = new Ingredient("bread", TypeOfIngredient.CARBOHYDRATES);
         IngredientForm form = new IngredientForm("apple", TypeOfIngredient.FRUITS);
 
-        Mockito.when(ingredientRepository.findById(Mockito.any()))
-                .thenReturn(Optional.of(ingredient));
+        Mockito.when(ingredientRepository.getReferenceById(Mockito.any()))
+                .thenReturn(ingredient);
         Mockito.when(ingredientRepository.findByName(Mockito.any()))
                 .thenReturn(Optional.of(ingredient));
 
@@ -93,8 +92,8 @@ public class IngredientServiceTest {
     void shouldDeleteAIngredient() {
         Ingredient ingredient = new Ingredient("bread", TypeOfIngredient.CARBOHYDRATES);
 
-        Mockito.when(ingredientRepository.findById(Mockito.any()))
-                .thenReturn(Optional.of(ingredient));
+        Mockito.when(ingredientRepository.getReferenceById(Mockito.any()))
+                .thenReturn(ingredient);
 
         ingredientService.deleteIngredient(1L);
         Mockito.verify(ingredientRepository).delete(Mockito.any());
@@ -102,9 +101,9 @@ public class IngredientServiceTest {
 
     @Test
     void shouldThrowAExceptionOnDeleteIngredientIfDoesntExists() {
-        Mockito.when(ingredientRepository.findById(Mockito.any()))
-                .thenReturn(Optional.empty());
-        Assertions.assertThrows(EntityDoesNotExistException.class, () -> ingredientService.deleteIngredient(1L));
+        Mockito.when(ingredientRepository.getReferenceById(Mockito.any()))
+                .thenThrow(EntityNotFoundException.class);
+        Assertions.assertThrows(EntityNotFoundException.class, () -> ingredientService.deleteIngredient(1L));
     }
 
     @AfterEach

@@ -5,7 +5,7 @@ import com.github.italomded.recipesapi.domain.Recipe;
 import com.github.italomded.recipesapi.dto.form.ImageForm;
 import com.github.italomded.recipesapi.repository.ImageRepository;
 import com.github.italomded.recipesapi.repository.RecipeRepository;
-import com.github.italomded.recipesapi.service.exception.EntityDoesNotExistException;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.*;
 import org.mockito.*;
 
@@ -34,8 +34,8 @@ public class ImageServiceTest {
     void shouldEditAImage() {
         Image image = new Image();
 
-        Mockito.when(imageRepository.findById(Mockito.anyLong()))
-                .thenReturn(Optional.of(image));
+        Mockito.when(imageRepository.getReferenceById(Mockito.anyLong()))
+                .thenReturn(image);
 
         ImageForm form = new ImageForm("0x12345".getBytes());
         imageService.editImage(1L, form);
@@ -46,11 +46,11 @@ public class ImageServiceTest {
 
     @Test
     void shouldThrowAExceptionIfImageIdDoesntExistsOnEditImage() {
-        Mockito.when(imageRepository.findById(Mockito.anyLong()))
-                .thenReturn(Optional.empty());
+        Mockito.when(imageRepository.getReferenceById(Mockito.anyLong()))
+                .thenThrow(EntityNotFoundException.class);
 
         ImageForm form = new ImageForm("0x12345".getBytes());
-        Assertions.assertThrows(EntityDoesNotExistException.class, () -> imageService.editImage(1L, form));
+        Assertions.assertThrows(EntityNotFoundException.class, () -> imageService.editImage(1L, form));
     }
 
     @Test
@@ -59,10 +59,10 @@ public class ImageServiceTest {
 
         Image image = new Image();
 
-        Mockito.when(recipeRepository.findById(Mockito.anyLong()))
-                .thenReturn(Optional.of(recipe));
-        Mockito.when(imageRepository.findById(Mockito.anyLong()))
-                .thenReturn(Optional.of(image));
+        Mockito.when(recipeRepository.getReferenceById(Mockito.anyLong()))
+                .thenReturn(recipe);
+        Mockito.when(imageRepository.getReferenceById(Mockito.anyLong()))
+                .thenReturn(image);
         Mockito.when(imageRepository.save(Mockito.any()))
                 .thenReturn(image);
 
@@ -77,11 +77,11 @@ public class ImageServiceTest {
 
     @Test
     void shouldThrowAExceptionIfRecipeIdDoesntExistsOnCreateImage() {
-        Mockito.when(recipeRepository.findById(Mockito.anyLong()))
-                .thenReturn(Optional.empty());
+        Mockito.when(recipeRepository.getReferenceById(Mockito.anyLong()))
+                .thenThrow(EntityNotFoundException.class);
 
         ImageForm form = new ImageForm("0x12345".getBytes());
-        Assertions.assertThrows(EntityDoesNotExistException.class, () -> imageService.editImage(1L, form));
+        Assertions.assertThrows(EntityNotFoundException.class, () -> imageService.createImage(1L, form));
     }
 
     @Test
@@ -90,8 +90,8 @@ public class ImageServiceTest {
         Image image = new Image("0x12345".getBytes(), recipe);
         recipe.addImage(image);
 
-        Mockito.when(imageRepository.findById(Mockito.anyLong()))
-                .thenReturn(Optional.of(image));
+        Mockito.when(imageRepository.getReferenceById(Mockito.anyLong()))
+                .thenReturn(image);
 
         imageService.deleteImage(1L);
 
@@ -102,9 +102,9 @@ public class ImageServiceTest {
 
     @Test
     void shouldThrowAExceptionIfImageIdDoesntExistsOnDeleteImage() {
-        Mockito.when(imageRepository.findById(Mockito.anyLong()))
-                .thenReturn(Optional.empty());
-        Assertions.assertThrows(EntityDoesNotExistException.class, () -> imageService.deleteImage(1L));
+        Mockito.when(imageRepository.getReferenceById(Mockito.anyLong()))
+                .thenThrow(EntityNotFoundException.class);
+        Assertions.assertThrows(EntityNotFoundException.class, () -> imageService.deleteImage(1L));
     }
 
     @AfterEach
