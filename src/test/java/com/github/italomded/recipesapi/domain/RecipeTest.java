@@ -27,9 +27,8 @@ public class RecipeTest {
             int x = ++counter;
             recipeIngredient.setSequence(x);
             recipeIngredientID.set(recipeIngredient, (long) x);
+            recipe.addRecipeIngredient(recipeIngredient);
         }
-
-        recipe.getIngredientsOfRecipe().addAll(recipeIngredients);
     }
 
     @Test

@@ -24,4 +24,9 @@ public class ApplicationUser {
     private Set<Recipe> likedRecipes = new HashSet<>();
     @OneToMany(mappedBy = "creatorUser", orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<Recipe> recipesCreated  = new HashSet<>();
+
+    public void likeRecipe(Recipe recipe) {
+        boolean removed = likedRecipes.remove(recipe);
+        if (!removed) likedRecipes.add(recipe);
+    }
 }

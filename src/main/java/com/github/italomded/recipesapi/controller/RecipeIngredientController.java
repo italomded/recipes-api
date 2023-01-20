@@ -1,12 +1,16 @@
 package com.github.italomded.recipesapi.controller;
 
+import com.github.italomded.recipesapi.domain.RecipeIngredient;
+import com.github.italomded.recipesapi.dto.RecipeIngredientDTO;
 import com.github.italomded.recipesapi.dto.form.RecipeIngredientCreateForm;
 import com.github.italomded.recipesapi.dto.form.RecipeIngredientEditForm;
 import com.github.italomded.recipesapi.service.RecipeIngredientService;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 
@@ -20,23 +24,27 @@ public class RecipeIngredientController {
         this.recipeIngredientService = recipeIngredientService;
     }
 
+    @Transactional
     @PutMapping("{id}")
-    public ResponseEntity<Long> editRecipeIngredient(@PathVariable long id, @RequestBody @Valid RecipeIngredientEditForm form) {
-        Long idEdited = recipeIngredientService.editRecipeIngredient(id, form);
-        return ResponseEntity.ok(idEdited);
+    public ResponseEntity<RecipeIngredientDTO> editRecipeIngredient(@PathVariable long id, @RequestBody @Valid RecipeIngredientEditForm form) {
+        RecipeIngredient recipeIngredient = recipeIngredientService.editRecipeIngredient(id, form);
+        return ResponseEntity.ok(new RecipeIngredientDTO(recipeIngredient));
     }
 
+    @Transactional
     @PostMapping("{recipeId}")
-    public ResponseEntity<Long> createRecipeIngredient(@PathVariable long recipeId, @RequestBody @Valid RecipeIngredientCreateForm form) {
-        Long idCreated = recipeIngredientService.createRecipeIngredient(recipeId, form);
-        URI location = URI.create(String.format("/api/recipe/%d", recipeId));
-        return ResponseEntity.created(location).body(idCreated);
+    public ResponseEntity<RecipeIngredientDTO> createRecipeIngredient(@PathVariable long recipeId, @RequestBody @Valid RecipeIngredientCreateForm form,
+                                                                      UriComponentsBuilder uriComponentsBuilder) {
+        RecipeIngredient recipeIngredient = recipeIngredientService.createRecipeIngredient(recipeId, form);
+        URI location = uriComponentsBuilder.path("/api/recipe/{id}").buildAndExpand(recipeIngredient.getRecipe().getID()).toUri();
+        return ResponseEntity.created(location).body(new RecipeIngredientDTO(recipeIngredient));
     }
 
+    @Transactional
     @DeleteMapping("{id}")
     public ResponseEntity deleteRecipeIngredient(@PathVariable long id) {
         recipeIngredientService.deleteRecipeIngredient(id);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 
 }

@@ -36,7 +36,7 @@ public class RecipeIngredientService {
         return recipeIngredientRepository.findByRecipe_ID(recipeID, pageable);
     }
 
-    public Long editRecipeIngredient(Long recipeIngredientID, RecipeIngredientEditForm form) {
+    public RecipeIngredient editRecipeIngredient(Long recipeIngredientID, RecipeIngredientEditForm form) {
         // TODO: verify if request user is the author of the recipe
         Optional<RecipeIngredient> optionalRecipeIngredient = recipeIngredientRepository.findById(recipeIngredientID);
         if (optionalRecipeIngredient.isEmpty()) {
@@ -51,10 +51,10 @@ public class RecipeIngredientService {
         recipeIngredient.getQuantity().setMeasure(form.measure());
         recipeIngredientRepository.save(recipeIngredient);
 
-        return recipeIngredient.getID();
+        return recipeIngredient;
     }
 
-    public Long createRecipeIngredient(Long recipeID, RecipeIngredientCreateForm form) {
+    public RecipeIngredient createRecipeIngredient(Long recipeID, RecipeIngredientCreateForm form) {
         // TODO: verify if request user is the author of the recipe
         Optional<Recipe> optionalRecipe = recipeRepository.findById(recipeID);
         if (optionalRecipe.isEmpty()) {
@@ -77,10 +77,10 @@ public class RecipeIngredientService {
         recipeIngredient = recipeIngredientRepository.save(recipeIngredient);
         recipeRepository.save(recipe);
 
-        return recipeIngredient.getID();
+        return recipeIngredient;
     }
 
-    public void deleteRecipeIngredient(Long recipeIngredientID) {
+    public boolean deleteRecipeIngredient(Long recipeIngredientID) {
         // TODO: verify if request user is the author of the recipe
         Optional<RecipeIngredient> optionalRecipeIngredient = recipeIngredientRepository.findById(recipeIngredientID);
         if (optionalRecipeIngredient.isEmpty()) {
@@ -96,5 +96,6 @@ public class RecipeIngredientService {
         recipe.removeRecipeIngredient(recipeIngredient);
         recipeIngredientRepository.delete(recipeIngredient);
         recipeRepository.save(recipe);
+        return true;
     }
 }

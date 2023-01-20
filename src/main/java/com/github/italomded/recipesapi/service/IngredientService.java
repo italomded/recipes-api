@@ -27,16 +27,16 @@ public class IngredientService {
         return ingredientRepository.findAll(pageable);
     }
 
-    public Long createIngredient(IngredientForm form) {
+    public Ingredient createIngredient(IngredientForm form) {
         // TODO: verify if user author of request are adm
         verifyIfIngredientNameAlreadyExists(form);
 
         Ingredient ingredient = new Ingredient(form.name(), form.type());
         ingredient = ingredientRepository.save(ingredient);
-        return ingredient.getID();
+        return ingredient;
     }
 
-    public Long editIngredient(Long ingredientID, IngredientForm form) {
+    public Ingredient editIngredient(Long ingredientID, IngredientForm form) {
         // TODO: verify if user author of request are adm
         Optional<Ingredient> optionalIngredient = ingredientRepository.findById(ingredientID);
         if (optionalIngredient.isEmpty()) {
@@ -49,16 +49,17 @@ public class IngredientService {
         ingredient.setName(form.name());
         ingredient.setCategory(form.type());
         ingredient = ingredientRepository.save(ingredient);
-        return ingredient.getID();
+        return ingredient;
     }
 
-    public void deleteIngredient(Long ingredientID) {
+    public boolean deleteIngredient(Long ingredientID) {
         // TODO: verify if user author of request are adm
         Optional<Ingredient> optionalIngredient = ingredientRepository.findById(ingredientID);
         if (optionalIngredient.isEmpty()) {
             throw new EntityDoesNotExistException(Ingredient.class, ingredientID);
         }
         ingredientRepository.delete(optionalIngredient.get());
+        return true;
     }
 
     private void verifyIfIngredientNameAlreadyExists(IngredientForm form) {

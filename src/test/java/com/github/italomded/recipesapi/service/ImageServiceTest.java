@@ -9,10 +9,8 @@ import com.github.italomded.recipesapi.service.exception.EntityDoesNotExistExcep
 import org.junit.jupiter.api.*;
 import org.mockito.*;
 
-import java.lang.reflect.Field;
 import java.util.Optional;
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class ImageServiceTest {
     @Mock
     private ImageRepository imageRepository;
@@ -23,16 +21,9 @@ public class ImageServiceTest {
     private ImageService imageService;
 
     private AutoCloseable closeable;
-    private Field imageID;
 
     @Captor
     private ArgumentCaptor<Image> captor;
-
-    @BeforeAll
-    public void createFieldIdForRecipeIngredient() throws NoSuchFieldException {
-        imageID = Image.class.getDeclaredField("ID");
-        imageID.setAccessible(true);
-    }
 
     @BeforeEach
     public void createMocks() {
@@ -40,9 +31,8 @@ public class ImageServiceTest {
     }
 
     @Test
-    void shouldEditAImage() throws IllegalAccessException {
+    void shouldEditAImage() {
         Image image = new Image();
-        imageID.set(image, 1L);
 
         Mockito.when(imageRepository.findById(Mockito.anyLong()))
                 .thenReturn(Optional.of(image));
@@ -64,11 +54,10 @@ public class ImageServiceTest {
     }
 
     @Test
-    void shouldCreateAImage() throws IllegalAccessException {
+    void shouldCreateAImage() {
         Recipe recipe = new Recipe();
 
         Image image = new Image();
-        imageID.set(image, 1L);
 
         Mockito.when(recipeRepository.findById(Mockito.anyLong()))
                 .thenReturn(Optional.of(recipe));

@@ -28,7 +28,7 @@ public class ImageService {
         return imageRepository.findByRecipe_ID(recipeID, pageable);
     }
 
-    public Long editImage(Long imageID, ImageForm form) {
+    public Image editImage(Long imageID, ImageForm form) {
         // TODO: verify if request user is the author of the recipe
         Optional<Image> optionalImage = imageRepository.findById(imageID);
         if (optionalImage.isEmpty()) {
@@ -38,10 +38,10 @@ public class ImageService {
         Image image = optionalImage.get();
         image.setImageBytes(form.bytes());
         imageRepository.save(image);
-        return image.getID();
+        return image;
     }
 
-    public Long createImage(Long recipeID, ImageForm form) {
+    public Image createImage(Long recipeID, ImageForm form) {
         // TODO: verify if request user is the author of the recipe
         Optional<Recipe> optionalRecipe = recipeRepository.findById(recipeID);
         if (optionalRecipe.isEmpty()) {
@@ -54,7 +54,7 @@ public class ImageService {
 
         recipeRepository.save(recipe);
         image = imageRepository.save(image);
-        return image.getID();
+        return image;
     }
 
     public void deleteImage(Long imageID) {

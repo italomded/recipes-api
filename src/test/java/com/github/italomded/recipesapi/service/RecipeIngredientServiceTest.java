@@ -14,10 +14,8 @@ import com.github.italomded.recipesapi.service.exception.EntityDoesNotExistExcep
 import org.junit.jupiter.api.*;
 import org.mockito.*;
 
-import java.lang.reflect.Field;
 import java.util.Optional;
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class RecipeIngredientServiceTest {
     @Mock
     private RecipeRepository recipeRepository;
@@ -32,13 +30,6 @@ public class RecipeIngredientServiceTest {
     private ArgumentCaptor<RecipeIngredient> captor;
 
     private AutoCloseable closeable;
-    private Field recipeIngredientID;
-
-    @BeforeAll
-    public void createFieldIdForRecipeIngredient() throws NoSuchFieldException {
-        recipeIngredientID = RecipeIngredient.class.getDeclaredField("ID");
-        recipeIngredientID.setAccessible(true);
-    }
 
     @BeforeEach
     public void createMocks() {
@@ -46,11 +37,10 @@ public class RecipeIngredientServiceTest {
     }
 
     @Test
-    void shouldCreateARecipeIngredient() throws IllegalAccessException {
+    void shouldCreateARecipeIngredient() {
         Recipe recipe = new Recipe();
         Ingredient ingredient = new Ingredient();
         RecipeIngredient recipeIngredientWithId = new RecipeIngredient();
-        recipeIngredientID.set(recipeIngredientWithId, 1L);
 
         Mockito.when(recipeRepository.findById(Mockito.anyLong()))
                 .thenReturn(Optional.of(recipe));
@@ -93,9 +83,8 @@ public class RecipeIngredientServiceTest {
     }
 
     @Test
-    void shouldEditRecipeIngredient() throws IllegalAccessException {
+    void shouldEditRecipeIngredient() {
         RecipeIngredient recipeIngredient = new RecipeIngredient();
-        recipeIngredientID.set(recipeIngredient, 1L);
 
         Mockito.when(recipeIngredientRepository.findById(Mockito.anyLong()))
                 .thenReturn(Optional.of(recipeIngredient));
@@ -120,14 +109,13 @@ public class RecipeIngredientServiceTest {
     }
 
     @Test
-    void shouldDeleteARecipeIngredient() throws IllegalAccessException {
+    void shouldDeleteARecipeIngredient() {
         Recipe recipe = new Recipe();
         recipe.addRecipeIngredient(new RecipeIngredient());
         recipe.addRecipeIngredient(new RecipeIngredient());
         recipe.addRecipeIngredient(new RecipeIngredient());
 
         RecipeIngredient recipeIngredient = new RecipeIngredient(recipe, null, null, null, null);
-        recipeIngredientID.set(recipeIngredient, 1L);
         recipe.addRecipeIngredient(recipeIngredient);
 
         Mockito.when(recipeIngredientRepository.findById(Mockito.anyLong()))
@@ -149,12 +137,11 @@ public class RecipeIngredientServiceTest {
     }
 
     @Test
-    void shouldThrowAExceptionOnDeleteRecipeIngredientIfRecipeHaveLessThanFourIngredients() throws IllegalAccessException {
+    void shouldThrowAExceptionOnDeleteRecipeIngredientIfRecipeHaveLessThanFourIngredients() {
         Recipe recipe = new Recipe();
         recipe.addRecipeIngredient(new RecipeIngredient());
 
         RecipeIngredient recipeIngredient = new RecipeIngredient(recipe, null, null, null, null);
-        recipeIngredientID.set(recipeIngredient, 1L);
         recipe.addRecipeIngredient(recipeIngredient);
 
         Mockito.when(recipeIngredientRepository.findById(Mockito.anyLong()))

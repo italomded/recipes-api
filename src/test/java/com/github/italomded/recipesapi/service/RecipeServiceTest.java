@@ -12,7 +12,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
 
-import java.lang.reflect.Field;
 import java.util.Optional;
 
 public class RecipeServiceTest {
@@ -37,17 +36,13 @@ public class RecipeServiceTest {
     }
 
     @Test
-    void shouldCreateARecipe() throws IllegalAccessException, NoSuchFieldException {
+    void shouldCreateARecipe() {
         Mockito.when(applicationUserRepository.findById(Mockito.anyLong()))
                 .thenReturn(Optional.of(new ApplicationUser()));
         Mockito.when(ingredientRepository.findById(Mockito.anyLong()))
                 .thenReturn(Optional.of(new Ingredient()));
 
         Recipe recipe = new Recipe();
-        Field id = Recipe.class.getDeclaredField("ID");
-        id.setAccessible(true);
-        id.set(recipe, 1L);
-
         Mockito.when(recipeRepository.save(Mockito.any()))
                 .thenReturn(recipe);
 
@@ -75,7 +70,7 @@ public class RecipeServiceTest {
     }
 
     @Test
-    void shouldCreateEditARecipe() {
+    void shouldEditARecipe() {
         Recipe recipe = new Recipe();
         Mockito.when(recipeRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(recipe));
 

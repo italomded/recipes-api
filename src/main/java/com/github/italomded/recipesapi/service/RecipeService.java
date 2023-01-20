@@ -38,7 +38,7 @@ public class RecipeService {
         return recipeRepository.findById(recipeID);
     }
 
-    public Long editRecipe(Long recipeID, RecipeEditForm form) {
+    public Recipe editRecipe(Long recipeID, RecipeEditForm form) {
         // TODO: verify if request user is the author of the recipe
         Optional<Recipe> optionalRecipe = getRecipeById(recipeID);
         if (optionalRecipe.isEmpty()) {
@@ -49,10 +49,10 @@ public class RecipeService {
         recipe.setTitle(form.title());
         recipe.setDescription(form.description());
         recipeRepository.save(recipe);
-        return recipe.getID();
+        return recipe;
     }
 
-    public Long createRecipe(RecipeCreateForm form) {
+    public Recipe createRecipe(RecipeCreateForm form) {
         // TODO: set request author user as recipe creator
         ApplicationUser user = applicationUserRepository.findById(1L).get(); // TODO: delete this line
 
@@ -79,17 +79,24 @@ public class RecipeService {
 
         recipe.setCreatorUser(user);
         recipe = recipeRepository.save(recipe);
-        return recipe.getID();
+        return recipe;
     }
 
-    public void deleteRecipe(Long recipeID) {
+    public boolean deleteRecipe(Long recipeID) {
         // TODO: verify if request user is the author of the recipe
         Optional<Recipe> optionalRecipe = recipeRepository.findById(recipeID);
         if (optionalRecipe.isEmpty()) {
             throw new EntityDoesNotExistException(Recipe.class, recipeID);
         }
+
         Recipe recipe = optionalRecipe.get();
+        recipe.getUsersThatLiked().forEach(user -> {
+            user.likeRecipe(recipe);
+            applicationUserRepository.save(user);
+        });
+
         recipeRepository.delete(recipe);
+        return true;
     }
 
     public void likeRecipe() {

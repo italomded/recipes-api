@@ -12,7 +12,6 @@ import org.mockito.*;
 import java.lang.reflect.Field;
 import java.util.Optional;
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class IngredientServiceTest {
     @Mock
     private IngredientRepository ingredientRepository;
@@ -21,16 +20,9 @@ public class IngredientServiceTest {
     private IngredientService ingredientService;
 
     private AutoCloseable closeable;
-    private Field ingredientID;
 
     @Captor
     private ArgumentCaptor<Ingredient> captor;
-
-    @BeforeAll
-    public void createFieldIdForRecipeIngredient() throws NoSuchFieldException {
-        ingredientID = Ingredient.class.getDeclaredField("ID");
-        ingredientID.setAccessible(true);
-    }
 
     @BeforeEach
     public void createMocks() {
@@ -38,10 +30,9 @@ public class IngredientServiceTest {
     }
 
     @Test
-    void shouldCreateAIngredient() throws IllegalAccessException {
+    void shouldCreateAIngredient() {
         IngredientForm form = new IngredientForm("apple", TypeOfIngredient.FRUITS);
         Ingredient ingredient = new Ingredient();
-        ingredientID.set(ingredient, 1L);
 
         Mockito.when(ingredientRepository.save(Mockito.any()))
                 .thenReturn(ingredient);
@@ -69,9 +60,8 @@ public class IngredientServiceTest {
     }
 
     @Test
-    void shouldEditAIngredient() throws IllegalAccessException {
+    void shouldEditAIngredient() {
         Ingredient ingredient = new Ingredient("bread", TypeOfIngredient.CARBOHYDRATES);
-        ingredientID.set(ingredient, 1L);
         IngredientForm form = new IngredientForm("apple", TypeOfIngredient.FRUITS);
 
         Mockito.when(ingredientRepository.findById(Mockito.any()))
