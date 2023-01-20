@@ -12,16 +12,16 @@ INSERT INTO ingredient (id, name, category) VALUES (8, 'Spinach', 'VEGETABLES');
 INSERT INTO ingredient (id, name, category) VALUES (9, 'Cabbage', 'VEGETABLES');
 INSERT INTO ingredient (id, name, category) VALUES (10, 'Mint', 'VEGETABLES');
 
-INSERT INTO user (id) VALUES (1);
-INSERT INTO user (id) VALUES (2);
-INSERT INTO user (id) VALUES (3);
-INSERT INTO user (id) VALUES (4);
-INSERT INTO user (id) VALUES (5);
-INSERT INTO user (id) VALUES (6);
-INSERT INTO user (id) VALUES (7);
-INSERT INTO user (id) VALUES (8);
-INSERT INTO user (id) VALUES (9);
-INSERT INTO user (id) VALUES (10);
+INSERT INTO user (id, username, password) VALUES (1, 'alvin', '$2a$10$Y50UaMFOxteibQEYLrwuHeehHYfcoafCopUazP12.rqB41bsolF5.');
+INSERT INTO user (id, username, password) VALUES (2, 'george', '$2a$10$Y50UaMFOxteibQEYLrwuHeehHYfcoafCopUazP12.rqB41bsolF5.');
+INSERT INTO user (id, username, password) VALUES (3, 'alexa', '$2a$10$Y50UaMFOxteibQEYLrwuHeehHYfcoafCopUazP12.rqB41bsolF5.');
+INSERT INTO user (id, username, password) VALUES (4, 'matthew', '$2a$10$Y50UaMFOxteibQEYLrwuHeehHYfcoafCopUazP12.rqB41bsolF5.');
+INSERT INTO user (id, username, password) VALUES (5, 'john', '$2a$10$Y50UaMFOxteibQEYLrwuHeehHYfcoafCopUazP12.rqB41bsolF5.');
+INSERT INTO user (id, username, password) VALUES (6, 'connor', '$2a$10$Y50UaMFOxteibQEYLrwuHeehHYfcoafCopUazP12.rqB41bsolF5.');
+INSERT INTO user (id, username, password) VALUES (7, 'lucas', '$2a$10$Y50UaMFOxteibQEYLrwuHeehHYfcoafCopUazP12.rqB41bsolF5.');
+INSERT INTO user (id, username, password) VALUES (8, 'ben', '$2a$10$Y50UaMFOxteibQEYLrwuHeehHYfcoafCopUazP12.rqB41bsolF5.');
+INSERT INTO user (id, username, password) VALUES (9, 'greg', '$2a$10$Y50UaMFOxteibQEYLrwuHeehHYfcoafCopUazP12.rqB41bsolF5.');
+INSERT INTO user (id, username, password) VALUES (10, 'thomas', '$2a$10$Y50UaMFOxteibQEYLrwuHeehHYfcoafCopUazP12.rqB41bsolF5.');
 
 INSERT INTO recipe (id, description, title, creator_user_id) VALUES (1, 'A good recipe', 'Simple recipe', 1);
 INSERT INTO recipe (id, description, title, creator_user_id) VALUES (2, 'A good recipe', 'Simple recipe', 2);

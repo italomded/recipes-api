@@ -1,5 +1,6 @@
 package com.github.italomded.recipesapi.controller.error;
 
+import com.github.italomded.recipesapi.dto.error.ErrorResponseDTO;
 import com.github.italomded.recipesapi.service.exception.BusinessRuleException;
 import com.github.italomded.recipesapi.service.exception.DataValidationException;
 import jakarta.persistence.EntityNotFoundException;

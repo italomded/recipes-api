@@ -15,4 +15,4 @@ spring:
       mode: always
 server:
   error:
-    include-stracktrace: never
+    include-stacktrace: never

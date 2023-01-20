@@ -57,8 +57,8 @@ public class IngredientService {
     }
 
     private void verifyIfIngredientNameAlreadyExists(IngredientForm form) {
-        Optional<Ingredient> optionalIngredient = ingredientRepository.findByName(form.name());
-        if (optionalIngredient.isPresent()) {
+        boolean exists = ingredientRepository.existsByName(form.name());
+        if (exists) {
             try {
                 Field name = form.getClass().getDeclaredField("name");
                 throw new DataValidationException("ingredient name already exists", name);

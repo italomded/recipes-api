@@ -1,4 +1,4 @@
-package com.github.italomded.recipesapi.controller.error;
+package com.github.italomded.recipesapi.dto.error;
 
 import com.github.italomded.recipesapi.service.exception.BusinessRuleException;
 import com.github.italomded.recipesapi.service.exception.DataValidationException;
