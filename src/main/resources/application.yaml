@@ -16,3 +16,8 @@ spring:
 server:
   error:
     include-stacktrace: never
+api:
+  security:
+    jwt:
+      secret: ${JWT_SECRET:123456789}
+      issuer: recipes_api

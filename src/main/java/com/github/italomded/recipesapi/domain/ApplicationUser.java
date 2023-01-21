@@ -25,6 +25,8 @@ public class ApplicationUser implements UserDetails {
     @Column(nullable = false)
     private String password;
 
+    // TODO: roles
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "user_like_recipe",

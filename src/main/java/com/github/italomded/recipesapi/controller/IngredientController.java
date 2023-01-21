@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -33,12 +34,14 @@ public class IngredientController {
     }
 
     @PutMapping("{id}")
+    @Secured("ROLE_ADM")
     public ResponseEntity<IngredientDTO> editRecipe(@PathVariable long id, @RequestBody @Valid IngredientForm form) {
         Ingredient ingredient = ingredientService.editIngredient(id, form);
         return ResponseEntity.ok(new IngredientDTO(ingredient));
     }
 
     @PostMapping
+    @Secured("ROLE_ADM")
     public ResponseEntity<IngredientDTO> createIngredient(@RequestBody @Valid IngredientForm form, UriComponentsBuilder uriComponentsBuilder) {
         Ingredient ingredient = ingredientService.createIngredient(form);
         URI location = uriComponentsBuilder.path("/api/ingredient").build().toUri();
@@ -46,6 +49,7 @@ public class IngredientController {
     }
 
     @DeleteMapping("{id}")
+    @Secured("ROLE_ADM")
     public ResponseEntity deleteIngredient(@PathVariable long id) {
         ingredientService.deleteIngredient(id);
         return ResponseEntity.noContent().build();

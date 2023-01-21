@@ -23,7 +23,7 @@ public class ApplicationUserController {
     @Autowired
     private TokenService tokenService;
 
-    @PostMapping
+    @PostMapping("login")
     public ResponseEntity authenticate(@RequestBody @Valid LoginForm form) {
         UsernamePasswordAuthenticationToken authenticationData = new UsernamePasswordAuthenticationToken(form.username(), form.password());
         Authentication authenticate = authenticationManager.authenticate(authenticationData);
@@ -31,4 +31,6 @@ public class ApplicationUserController {
         String tokenJWT = tokenService.generateToken(user);
         return ResponseEntity.ok(new TokenDTO(tokenJWT));
     }
+
+    // TODO: update, delete
 }
