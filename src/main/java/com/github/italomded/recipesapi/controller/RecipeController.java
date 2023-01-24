@@ -1,5 +1,6 @@
 package com.github.italomded.recipesapi.controller;
 
+import com.github.italomded.recipesapi.domain.ApplicationUser;
 import com.github.italomded.recipesapi.domain.Image;
 import com.github.italomded.recipesapi.domain.Recipe;
 import com.github.italomded.recipesapi.domain.RecipeIngredient;
@@ -19,6 +20,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -76,7 +78,8 @@ public class RecipeController {
 
     @PutMapping("{id}")
     public ResponseEntity<RecipeDTO> editRecipe(@PathVariable long id, @RequestBody @Valid RecipeEditForm form) {
-        Recipe recipe = recipeService.editRecipe(id, form);
+        ApplicationUser user = (ApplicationUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Recipe recipe = recipeService.editRecipe(id, form, user);
         return ResponseEntity.ok(new RecipeDTO(recipe));
     }
 
@@ -89,14 +92,16 @@ public class RecipeController {
 
     @PostMapping
     public ResponseEntity<RecipeDTO> createRecipe(@RequestBody @Valid RecipeCreateForm form, UriComponentsBuilder uriComponentsBuilder) {
-        Recipe recipe = recipeService.createRecipe(form);
+        ApplicationUser user = (ApplicationUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Recipe recipe = recipeService.createRecipe(form, user);
         URI location = uriComponentsBuilder.path("/api/recipe/{id}").buildAndExpand(recipe.getID()).toUri();
         return ResponseEntity.created(location).body(new RecipeDTO(recipe));
     }
 
     @DeleteMapping("{id}")
     public ResponseEntity deleteRecipe(@PathVariable long id) {
-        recipeService.deleteRecipe(id);
+        ApplicationUser user = (ApplicationUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        recipeService.deleteRecipe(id, user);
         return ResponseEntity.noContent().build();
     }
 }

@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 public record RecipeCreateForm (
-        @NotNull
+        @Size(min = 1)
         ImageForm[] images,
         @NotBlank
         String title,

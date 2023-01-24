@@ -5,6 +5,7 @@ import com.github.italomded.recipesapi.dto.form.*;
 import com.github.italomded.recipesapi.repository.ApplicationUserRepository;
 import com.github.italomded.recipesapi.repository.IngredientRepository;
 import com.github.italomded.recipesapi.repository.RecipeRepository;
+import com.github.italomded.recipesapi.service.exception.BusinessRuleException;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -12,6 +13,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
 
+import java.lang.reflect.Field;
 import java.util.Optional;
 
 public class RecipeServiceTest {
@@ -47,7 +49,7 @@ public class RecipeServiceTest {
                 .thenReturn(recipe);
 
         RecipeCreateForm form = createRecipeForm();
-        recipeService.createRecipe(form);
+        recipeService.createRecipe(form, new ApplicationUser());
 
         Mockito.verify(recipeRepository).save(captor.capture());
         recipe = captor.getValue();
@@ -66,16 +68,16 @@ public class RecipeServiceTest {
                 .thenThrow(EntityNotFoundException.class);
 
         RecipeCreateForm recipeForm = createRecipeForm();
-        Assertions.assertThrows(EntityNotFoundException.class, () -> recipeService.createRecipe(recipeForm));
+        Assertions.assertThrows(EntityNotFoundException.class, () -> recipeService.createRecipe(recipeForm, new ApplicationUser()));
     }
 
     @Test
     void shouldEditARecipe() {
-        Recipe recipe = new Recipe();
+        Recipe recipe = this.createRecipe();
         Mockito.when(recipeRepository.getReferenceById(Mockito.anyLong())).thenReturn(recipe);
 
         RecipeEditForm form = new RecipeEditForm("new title", "new description");
-        recipeService.editRecipe(Mockito.anyLong(), form);
+        recipeService.editRecipe(Mockito.anyLong(), form, recipe.getCreatorUser());
 
         Mockito.verify(recipeRepository).save(recipe);
         Assertions.assertEquals(recipe.getTitle(), form.title());
@@ -84,25 +86,40 @@ public class RecipeServiceTest {
 
     @Test
     void shouldThrowAExceptionOnEditRecipeIfRecipeIdIsNull() {
-        Mockito.when(recipeRepository.getReferenceById(Mockito.anyLong())).thenThrow(EntityNotFoundException.class);
+        Mockito.when(recipeRepository.getReferenceById(null)).thenThrow(EntityNotFoundException.class);
         Assertions.assertThrows(EntityNotFoundException.class,
-                () -> recipeService.editRecipe(Mockito.anyLong(), new RecipeEditForm("A", "B")));
+                () -> recipeService.editRecipe(null, new RecipeEditForm("A", "B"), new ApplicationUser()));
     }
 
     @Test
     void shouldThrowExceptionOnDeleteRecipeIfIdDoesntExists() {
         Mockito.when(recipeRepository.getReferenceById(Mockito.anyLong()))
                 .thenThrow(EntityNotFoundException.class);
-        Assertions.assertThrows(EntityNotFoundException.class, () -> recipeService.deleteRecipe(Mockito.anyLong()));
+        Assertions.assertThrows(EntityNotFoundException.class, () -> recipeService.deleteRecipe(Mockito.anyLong(), new ApplicationUser()));
     }
 
     @Test
     void shouldDeleteARecipe() {
-        Recipe recipe = new Recipe();
+        Recipe recipe = this.createRecipe();
         Mockito.when(recipeRepository.getReferenceById(Mockito.anyLong()))
                 .thenReturn(recipe);
-        recipeService.deleteRecipe(Mockito.anyLong());
+        recipeService.deleteRecipe(Mockito.anyLong(), recipe.getCreatorUser());
         Mockito.verify(recipeRepository).delete(recipe);
+    }
+
+    @Test
+    void shouldCompareIfAPassedUserIsTheAuthorOfAPassedRecipe() throws IllegalAccessException, NoSuchFieldException {
+        ApplicationUser userA = new ApplicationUser();
+        ApplicationUser userB = new ApplicationUser();
+        Field id = ApplicationUser.class.getDeclaredField("ID");
+        id.setAccessible(true);
+        id.set(userA, 1L);
+        id.set(userB, 2L);
+
+        Recipe recipe = new Recipe("title", "description", userA);
+
+        Assertions.assertTrue(recipeService.verifyIfIsTheAuthor(recipe, userA));
+        Assertions.assertThrows(BusinessRuleException.class, () -> recipeService.verifyIfIsTheAuthor(recipe, userB));
     }
 
     @AfterEach
@@ -120,5 +137,9 @@ public class RecipeServiceTest {
                 new RecipeIngredientCreateWithRecipeForm(3L, 20.0, Measure.MG, "Do this and do that", 5)
         };
         return new RecipeCreateForm(images, "Simple title", "Simple description", recipeIngredients);
+    }
+
+    static public Recipe createRecipe() {
+        return new Recipe("title", "description", new ApplicationUser());
     }
 }

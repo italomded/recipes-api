@@ -1,10 +1,12 @@
 package com.github.italomded.recipesapi.domain;
 
+import com.github.italomded.recipesapi.service.exception.BusinessRuleException;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.*;
 
@@ -20,7 +22,6 @@ public class Recipe {
     @JoinColumn(nullable = false)
     @ManyToOne
     @Getter
-    @Setter
     private ApplicationUser creatorUser;
 
     @Column(nullable = false)
@@ -41,10 +42,11 @@ public class Recipe {
     @ManyToMany(mappedBy = "likedRecipes", fetch = FetchType.LAZY)
     private Set<ApplicationUser> usersWhoLiked = new HashSet<>();
 
-    public Recipe(String title, String description) {
+    public Recipe(String title, String description, ApplicationUser creatorUser) {
         this.images = new HashSet<>();
         this.title = title;
         this.description = description;
+        this.creatorUser = creatorUser;
     }
 
     public Set<Image> getImages() {
@@ -55,8 +57,11 @@ public class Recipe {
         images.add(image);
     }
 
-    public void removeImage(Image image) {
+    public boolean removeImage(Image image) {
+        if (!images.contains(image)) return false;
+        if (images.size() < 2) return false;
         images.remove(image);
+        return true;
     }
 
     public List<RecipeIngredient> getIngredientsOfRecipe() {
@@ -77,13 +82,16 @@ public class Recipe {
         ingredientsOfRecipe.add(recipeIngredient);
     }
 
-    public void removeRecipeIngredient(RecipeIngredient recipeIngredient) {
+    public boolean removeRecipeIngredient(RecipeIngredient recipeIngredient) {
+        if (!ingredientsOfRecipe.contains(recipeIngredient)) return false;
+        if (ingredientsOfRecipe.size() < 4) return false;
         for (RecipeIngredient ri : ingredientsOfRecipe) {
             if (ri.getSequence() > recipeIngredient.getSequence()) {
                 ri.setSequence(ri.getSequence() - 1);
             }
         }
         ingredientsOfRecipe.remove(recipeIngredient);
+        return true;
     }
 
     public void likeRecipe(ApplicationUser applicationUser) {

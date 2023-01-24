@@ -35,8 +35,8 @@ public class IngredientServiceTest {
 
         Mockito.when(ingredientRepository.save(Mockito.any()))
                 .thenReturn(ingredient);
-        Mockito.when(ingredientRepository.findByName(Mockito.any()))
-                .thenReturn(Optional.empty());
+        Mockito.when(ingredientRepository.existsByName(Mockito.any()))
+                .thenReturn(false);
 
         ingredientService.createIngredient(form);
 
@@ -52,8 +52,8 @@ public class IngredientServiceTest {
         Ingredient ingredient = new Ingredient("apple", TypeOfIngredient.FRUITS);
         IngredientForm form = new IngredientForm("Apple", TypeOfIngredient.FRUITS);
 
-        Mockito.when(ingredientRepository.findByName(Mockito.any()))
-                .thenReturn(Optional.of(ingredient));
+        Mockito.when(ingredientRepository.existsByName(Mockito.any()))
+                .thenReturn(true);
 
         Assertions.assertThrows(DataValidationException.class, () -> ingredientService.createIngredient(form));
     }
@@ -82,8 +82,8 @@ public class IngredientServiceTest {
 
         Mockito.when(ingredientRepository.getReferenceById(Mockito.any()))
                 .thenReturn(ingredient);
-        Mockito.when(ingredientRepository.findByName(Mockito.any()))
-                .thenReturn(Optional.of(ingredient));
+        Mockito.when(ingredientRepository.existsByName(Mockito.any()))
+                .thenReturn(true);
 
         Assertions.assertThrows(DataValidationException.class, () -> ingredientService.editIngredient(1L, form));
     }

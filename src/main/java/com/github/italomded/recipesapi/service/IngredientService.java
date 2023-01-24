@@ -11,7 +11,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Field;
-import java.util.Optional;
 
 @Service
 public class IngredientService {
@@ -28,7 +27,6 @@ public class IngredientService {
 
     @Transactional
     public Ingredient createIngredient(IngredientForm form) {
-        // TODO: verify if user author of request are adm
         verifyIfIngredientNameAlreadyExists(form);
 
         Ingredient ingredient = new Ingredient(form.name(), form.type());
@@ -38,7 +36,6 @@ public class IngredientService {
 
     @Transactional
     public Ingredient editIngredient(Long ingredientID, IngredientForm form) {
-        // TODO: verify if user author of request are adm
         Ingredient ingredient = ingredientRepository.getReferenceById(ingredientID);
         verifyIfIngredientNameAlreadyExists(form);
 
@@ -50,7 +47,6 @@ public class IngredientService {
 
     @Transactional
     public boolean deleteIngredient(Long ingredientID) {
-        // TODO: verify if user author of request are adm
         Ingredient ingredient = ingredientRepository.getReferenceById(ingredientID);
         ingredientRepository.delete(ingredient);
         return true;

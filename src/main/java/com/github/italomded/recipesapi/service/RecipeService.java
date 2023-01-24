@@ -5,10 +5,12 @@ import com.github.italomded.recipesapi.dto.form.*;
 import com.github.italomded.recipesapi.repository.ApplicationUserRepository;
 import com.github.italomded.recipesapi.repository.IngredientRepository;
 import com.github.italomded.recipesapi.repository.RecipeRepository;
+import com.github.italomded.recipesapi.service.exception.BusinessRuleException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -37,9 +39,9 @@ public class RecipeService {
     }
 
     @Transactional
-    public Recipe editRecipe(Long recipeID, RecipeEditForm form) {
-        // TODO: verify if request user is the author of the recipe
+    public Recipe editRecipe(Long recipeID, RecipeEditForm form, ApplicationUser userAuthor) {
         Recipe recipe = recipeRepository.getReferenceById(recipeID);
+        this.verifyIfIsTheAuthor(recipe, userAuthor);
 
         recipe.setTitle(form.title());
         recipe.setDescription(form.description());
@@ -49,11 +51,8 @@ public class RecipeService {
     }
 
     @Transactional
-    public Recipe createRecipe(RecipeCreateForm form) {
-        // TODO: set request author user as recipe creator
-        ApplicationUser user = applicationUserRepository.findById(1L).get(); // TODO: delete this line
-
-        Recipe recipe = new Recipe(form.title(), form.description());
+    public Recipe createRecipe(RecipeCreateForm form, ApplicationUser userAuthor) {
+        Recipe recipe = new Recipe(form.title(), form.description(), userAuthor);
         for (ImageForm imageForm : form.images()) {
             Image image = new Image(imageForm.bytes(), recipe);
             recipe.addImage(image);
@@ -70,15 +69,14 @@ public class RecipeService {
             recipe.addRecipeIngredient(recipeIngredient);
         }
 
-        recipe.setCreatorUser(user);
         recipe = recipeRepository.save(recipe);
         return recipe;
     }
 
     @Transactional
-    public boolean deleteRecipe(Long recipeID) {
-        // TODO: verify if request user is the author of the recipe
+    public boolean deleteRecipe(Long recipeID, ApplicationUser userAuthor) {
         Recipe recipe = recipeRepository.getReferenceById(recipeID);
+        this.verifyIfIsTheAuthor(recipe, userAuthor);
         recipe.getUsersThatLiked().forEach(user -> {
             user.likeRecipe(recipe);
             applicationUserRepository.save(user);
@@ -91,5 +89,10 @@ public class RecipeService {
     @Transactional
     public void likeRecipe() {
         // TODO: receive a user application to give a like
+    }
+
+    public static boolean verifyIfIsTheAuthor(Recipe recipe, ApplicationUser user) {
+        if (recipe.getCreatorUser().equals(user)) return true;
+        throw new BusinessRuleException(Recipe.class, "authenticated user is not the author of the recipe");
     }
 }

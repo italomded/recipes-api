@@ -1,5 +1,6 @@
 package com.github.italomded.recipesapi.controller;
 
+import com.github.italomded.recipesapi.domain.ApplicationUser;
 import com.github.italomded.recipesapi.domain.Image;
 import com.github.italomded.recipesapi.dto.ImageDTO;
 import com.github.italomded.recipesapi.dto.form.ImageForm;
@@ -8,6 +9,7 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -25,20 +27,26 @@ public class ImageController {
 
     @PutMapping("{id}")
     public ResponseEntity<ImageDTO> editImage(@PathVariable long id, @RequestBody @Valid ImageForm form) {
-        Image image = imageService.editImage(id, form);
+        ApplicationUser user = (ApplicationUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Image image = imageService.editImage(id, form, user);
+
         return ResponseEntity.ok(new ImageDTO(image));
     }
 
     @PostMapping("{recipeId}")
     public ResponseEntity<ImageDTO> createImage(@PathVariable long recipeId, @RequestBody @Valid ImageForm form, UriComponentsBuilder uriComponentsBuilder) {
-        Image image = imageService.createImage(recipeId, form);
+        ApplicationUser user = (ApplicationUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Image image = imageService.createImage(recipeId, form, user);
+
         URI location = uriComponentsBuilder.path("/api/recipe/{id}").buildAndExpand(image.getRecipe().getID()).toUri();
         return ResponseEntity.created(location).body(new ImageDTO(image));
     }
 
     @DeleteMapping("{id}")
     public ResponseEntity deleteImage(@PathVariable long id) {
-        imageService.deleteImage(id);
+        ApplicationUser user = (ApplicationUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        imageService.deleteImage(id, user);
+
         return ResponseEntity.noContent().build();
     }
 }

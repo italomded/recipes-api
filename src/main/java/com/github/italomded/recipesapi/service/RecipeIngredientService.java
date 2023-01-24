@@ -1,9 +1,6 @@
 package com.github.italomded.recipesapi.service;
 
-import com.github.italomded.recipesapi.domain.Ingredient;
-import com.github.italomded.recipesapi.domain.Quantity;
-import com.github.italomded.recipesapi.domain.Recipe;
-import com.github.italomded.recipesapi.domain.RecipeIngredient;
+import com.github.italomded.recipesapi.domain.*;
 import com.github.italomded.recipesapi.dto.form.RecipeIngredientCreateForm;
 import com.github.italomded.recipesapi.dto.form.RecipeIngredientEditForm;
 import com.github.italomded.recipesapi.repository.IngredientRepository;
@@ -35,9 +32,9 @@ public class RecipeIngredientService {
     }
 
     @Transactional
-    public RecipeIngredient editRecipeIngredient(Long recipeIngredientID, RecipeIngredientEditForm form) {
-        // TODO: verify if request user is the author of the recipe
+    public RecipeIngredient editRecipeIngredient(Long recipeIngredientID, RecipeIngredientEditForm form, ApplicationUser userAuthor) {
         RecipeIngredient recipeIngredient = recipeIngredientRepository.getReferenceById(recipeIngredientID);
+        RecipeService.verifyIfIsTheAuthor(recipeIngredient.getRecipe(), userAuthor);
 
         recipeIngredient.setInstruction(form.instruction());
         recipeIngredient.setPrepareMinutes(form.prepareMinutes());
@@ -50,9 +47,10 @@ public class RecipeIngredientService {
     }
 
     @Transactional
-    public RecipeIngredient createRecipeIngredient(Long recipeID, RecipeIngredientCreateForm form) {
-        // TODO: verify if request user is the author of the recipe
+    public RecipeIngredient createRecipeIngredient(Long recipeID, RecipeIngredientCreateForm form, ApplicationUser userAuthor) {
         Recipe recipe = recipeRepository.getReferenceById(recipeID);
+        RecipeService.verifyIfIsTheAuthor(recipe, userAuthor);
+
         Ingredient ingredient = ingredientRepository.getReferenceById(form.ingredientID());
 
         Quantity quantity = new Quantity(form.amount(), form.measure());
@@ -69,18 +67,20 @@ public class RecipeIngredientService {
     }
 
     @Transactional
-    public boolean deleteRecipeIngredient(Long recipeIngredientID) {
-        // TODO: verify if request user is the author of the recipe
+    public boolean deleteRecipeIngredient(Long recipeIngredientID, ApplicationUser userAuthor) {
         RecipeIngredient recipeIngredient = recipeIngredientRepository.getReferenceById(recipeIngredientID);
         Recipe recipe = recipeIngredient.getRecipe();
+        RecipeService.verifyIfIsTheAuthor(recipe, userAuthor);
 
-        if (recipe.getIngredientsOfRecipe().size() < 4) {
-            throw new BusinessRuleException(Recipe.class, "can't delete recipe ingredient because the recipe ingredient list should have at least 3 ingredients");
+        boolean removed = recipe.removeRecipeIngredient(recipeIngredient);
+        if (removed) {
+            recipeIngredientRepository.delete(recipeIngredient);
+            recipeRepository.save(recipe);
+            return true;
+        } else {
+            throw new BusinessRuleException(
+                    Recipe.class,
+                    "can't delete recipe ingredient because the recipe ingredient list should have at least 3 ingredients or the ingredient does not belong in the recipe");
         }
-
-        recipe.removeRecipeIngredient(recipeIngredient);
-        recipeIngredientRepository.delete(recipeIngredient);
-        recipeRepository.save(recipe);
-        return true;
     }
 }
