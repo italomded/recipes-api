@@ -1,6 +1,6 @@
 package com.github.italomded.recipesapi.repository;
 
-import com.github.italomded.recipesapi.domain.Recipe;
+import com.github.italomded.recipesapi.domain.recipe.Recipe;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

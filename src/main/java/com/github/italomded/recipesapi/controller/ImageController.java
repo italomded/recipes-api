@@ -1,11 +1,10 @@
 package com.github.italomded.recipesapi.controller;
 
-import com.github.italomded.recipesapi.domain.ApplicationUser;
-import com.github.italomded.recipesapi.domain.Image;
+import com.github.italomded.recipesapi.domain.user.ApplicationUser;
+import com.github.italomded.recipesapi.domain.recipe.Image;
 import com.github.italomded.recipesapi.dto.ImageDTO;
 import com.github.italomded.recipesapi.dto.form.ImageForm;
 import com.github.italomded.recipesapi.service.ImageService;
-import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

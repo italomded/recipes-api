@@ -1,6 +1,6 @@
 package com.github.italomded.recipesapi.dto;
 
-import com.github.italomded.recipesapi.domain.RecipeIngredient;
+import com.github.italomded.recipesapi.domain.recipe.RecipeIngredient;
 
 public record RecipeIngredientDTO (long id, IngredientDTO ingredient, QuantityDTO quantity, String instruction, int prepareMinutes, int sequence) {
     public RecipeIngredientDTO(RecipeIngredient recipeIngredient) {

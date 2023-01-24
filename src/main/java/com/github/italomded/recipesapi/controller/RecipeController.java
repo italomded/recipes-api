@@ -1,20 +1,19 @@
 package com.github.italomded.recipesapi.controller;
 
-import com.github.italomded.recipesapi.domain.ApplicationUser;
-import com.github.italomded.recipesapi.domain.Image;
-import com.github.italomded.recipesapi.domain.Recipe;
-import com.github.italomded.recipesapi.domain.RecipeIngredient;
+import com.github.italomded.recipesapi.domain.user.ApplicationUser;
+import com.github.italomded.recipesapi.domain.recipe.Image;
+import com.github.italomded.recipesapi.domain.recipe.Recipe;
+import com.github.italomded.recipesapi.domain.recipe.RecipeIngredient;
 import com.github.italomded.recipesapi.dto.ImageDTO;
 import com.github.italomded.recipesapi.dto.RecipeDTO;
+import com.github.italomded.recipesapi.dto.RecipeDetailedDTO;
 import com.github.italomded.recipesapi.dto.RecipeIngredientDTO;
 import com.github.italomded.recipesapi.dto.form.RecipeCreateForm;
 import com.github.italomded.recipesapi.dto.form.RecipeEditForm;
 import com.github.italomded.recipesapi.service.ImageService;
 import com.github.italomded.recipesapi.service.RecipeIngredientService;
 import com.github.italomded.recipesapi.service.RecipeService;
-import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
-import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,11 +21,9 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("api/recipe")
@@ -57,9 +54,11 @@ public class RecipeController {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<RecipeDTO> getRecipe(@PathVariable long id) {
+    public ResponseEntity<RecipeDetailedDTO> getRecipe(@PathVariable long id, UriComponentsBuilder uriComponentsBuilder) {
         Recipe recipe = recipeService.getRecipeById(id);
-        return ResponseEntity.ok(new RecipeDTO(recipe));
+        URI recipeImagesURI = uriComponentsBuilder.path("/api/recipe/image/{id}").buildAndExpand(recipe.getID()).toUri();
+        URI recipeIngredientsURI = uriComponentsBuilder.path("/api/recipe/ingredient/{id}").buildAndExpand(recipe.getID()).toUri();
+        return ResponseEntity.ok(new RecipeDetailedDTO(recipe, recipeImagesURI, recipeIngredientsURI));
     }
 
     @GetMapping("ingredient/{id}")
@@ -83,10 +82,10 @@ public class RecipeController {
         return ResponseEntity.ok(new RecipeDTO(recipe));
     }
 
-    @PatchMapping
-    public ResponseEntity likeRecipe() {
-        // TODO: change
-        recipeService.likeRecipe();
+    @PatchMapping("{id}")
+    public ResponseEntity likeRecipe(@PathVariable long id) {
+        ApplicationUser user = (ApplicationUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        recipeService.likeRecipe(id, user);
         return ResponseEntity.ok().build();
     }
 

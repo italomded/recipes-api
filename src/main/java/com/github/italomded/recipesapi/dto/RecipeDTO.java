@@ -1,8 +1,6 @@
 package com.github.italomded.recipesapi.dto;
 
-import com.github.italomded.recipesapi.domain.Recipe;
-
-import java.net.URI;
+import com.github.italomded.recipesapi.domain.recipe.Recipe;
 
 public record RecipeDTO (long id, long creatorUserId, String title, String description, int likes) {
     public RecipeDTO(Recipe recipe) {

@@ -1,6 +1,6 @@
 package com.github.italomded.recipesapi.dto.form;
 
-import com.github.italomded.recipesapi.domain.TypeOfIngredient;
+import com.github.italomded.recipesapi.domain.recipe.TypeOfIngredient;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 

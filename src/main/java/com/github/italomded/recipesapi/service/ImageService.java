@@ -1,8 +1,8 @@
 package com.github.italomded.recipesapi.service;
 
-import com.github.italomded.recipesapi.domain.ApplicationUser;
-import com.github.italomded.recipesapi.domain.Image;
-import com.github.italomded.recipesapi.domain.Recipe;
+import com.github.italomded.recipesapi.domain.user.ApplicationUser;
+import com.github.italomded.recipesapi.domain.recipe.Image;
+import com.github.italomded.recipesapi.domain.recipe.Recipe;
 import com.github.italomded.recipesapi.dto.form.ImageForm;
 import com.github.italomded.recipesapi.repository.ImageRepository;
 import com.github.italomded.recipesapi.repository.RecipeRepository;

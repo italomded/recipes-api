@@ -1,14 +1,14 @@
-package com.github.italomded.recipesapi.domain;
+package com.github.italomded.recipesapi.domain.user;
 
+import com.github.italomded.recipesapi.domain.recipe.Recipe;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -22,10 +22,11 @@ public class ApplicationUser implements UserDetails {
 
     @Column(nullable = false, unique = true, length = 25)
     private String username;
-    @Column(nullable = false)
+    @Column(nullable = false) @Setter
     private String password;
 
-    // TODO: roles
+    @JoinColumn(nullable = false) @Getter @Setter
+    private Role role;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
@@ -37,6 +38,12 @@ public class ApplicationUser implements UserDetails {
     @OneToMany(mappedBy = "creatorUser", orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<Recipe> recipesCreated  = new HashSet<>();
 
+    public ApplicationUser(String username, String password, Role role) {
+        this.username = username;
+        this.password = password;
+        this.role = role;
+    }
+
     public void likeRecipe(Recipe recipe) {
         boolean removed = likedRecipes.remove(recipe);
         if (!removed) likedRecipes.add(recipe);
@@ -44,7 +51,7 @@ public class ApplicationUser implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Arrays.asList(new SimpleGrantedAuthority("ROLE_USER"));
+        return Set.of(role);
     }
 
     @Override

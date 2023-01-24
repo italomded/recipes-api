@@ -1,6 +1,7 @@
 package com.github.italomded.recipesapi.service;
 
-import com.github.italomded.recipesapi.domain.*;
+import com.github.italomded.recipesapi.domain.recipe.*;
+import com.github.italomded.recipesapi.domain.user.ApplicationUser;
 import com.github.italomded.recipesapi.dto.form.*;
 import com.github.italomded.recipesapi.repository.ApplicationUserRepository;
 import com.github.italomded.recipesapi.repository.IngredientRepository;
@@ -10,7 +11,6 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -87,8 +87,9 @@ public class RecipeService {
     }
 
     @Transactional
-    public void likeRecipe() {
-        // TODO: receive a user application to give a like
+    public void likeRecipe(Long recipeId, ApplicationUser user) {
+        Recipe recipe = recipeRepository.getReferenceById(recipeId);
+        recipe.likeRecipe(user);
     }
 
     public static boolean verifyIfIsTheAuthor(Recipe recipe, ApplicationUser user) {

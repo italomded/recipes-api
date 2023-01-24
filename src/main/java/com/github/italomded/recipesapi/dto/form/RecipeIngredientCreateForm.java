@@ -1,6 +1,6 @@
 package com.github.italomded.recipesapi.dto.form;
 
-import com.github.italomded.recipesapi.domain.Measure;
+import com.github.italomded.recipesapi.domain.recipe.Measure;
 import jakarta.validation.constraints.NotNull;
 
 public record RecipeIngredientCreateForm(

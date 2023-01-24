@@ -1,6 +1,7 @@
 package com.github.italomded.recipesapi.service;
 
-import com.github.italomded.recipesapi.domain.*;
+import com.github.italomded.recipesapi.domain.recipe.*;
+import com.github.italomded.recipesapi.domain.user.ApplicationUser;
 import com.github.italomded.recipesapi.dto.form.RecipeIngredientCreateForm;
 import com.github.italomded.recipesapi.dto.form.RecipeIngredientEditForm;
 import com.github.italomded.recipesapi.repository.IngredientRepository;

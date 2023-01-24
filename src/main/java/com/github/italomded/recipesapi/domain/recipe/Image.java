@@ -1,4 +1,4 @@
-package com.github.italomded.recipesapi.domain;
+package com.github.italomded.recipesapi.domain.recipe;
 
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;

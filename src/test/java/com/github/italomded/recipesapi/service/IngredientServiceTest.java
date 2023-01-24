@@ -1,15 +1,13 @@
 package com.github.italomded.recipesapi.service;
 
-import com.github.italomded.recipesapi.domain.Ingredient;
-import com.github.italomded.recipesapi.domain.TypeOfIngredient;
+import com.github.italomded.recipesapi.domain.recipe.Ingredient;
+import com.github.italomded.recipesapi.domain.recipe.TypeOfIngredient;
 import com.github.italomded.recipesapi.dto.form.IngredientForm;
 import com.github.italomded.recipesapi.repository.IngredientRepository;
 import com.github.italomded.recipesapi.service.exception.DataValidationException;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.*;
 import org.mockito.*;
-
-import java.util.Optional;
 
 public class IngredientServiceTest {
     @Mock

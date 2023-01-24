@@ -2,9 +2,9 @@ package com.github.italomded.recipesapi.dto.form;
 
 import jakarta.validation.constraints.NotBlank;
 
-public record LoginForm (
+public record UserChangePasswordForm(
         @NotBlank
-        String username,
+        String oldPassword,
         @NotBlank
-        String password
+        String newPassword
 ) { }

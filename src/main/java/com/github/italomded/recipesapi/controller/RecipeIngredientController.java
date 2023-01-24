@@ -1,12 +1,11 @@
 package com.github.italomded.recipesapi.controller;
 
-import com.github.italomded.recipesapi.domain.ApplicationUser;
-import com.github.italomded.recipesapi.domain.RecipeIngredient;
+import com.github.italomded.recipesapi.domain.user.ApplicationUser;
+import com.github.italomded.recipesapi.domain.recipe.RecipeIngredient;
 import com.github.italomded.recipesapi.dto.RecipeIngredientDTO;
 import com.github.italomded.recipesapi.dto.form.RecipeIngredientCreateForm;
 import com.github.italomded.recipesapi.dto.form.RecipeIngredientEditForm;
 import com.github.italomded.recipesapi.service.RecipeIngredientService;
-import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

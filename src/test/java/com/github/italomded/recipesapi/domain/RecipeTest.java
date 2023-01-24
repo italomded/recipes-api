@@ -1,5 +1,9 @@
 package com.github.italomded.recipesapi.domain;
 
+import com.github.italomded.recipesapi.domain.recipe.Image;
+import com.github.italomded.recipesapi.domain.recipe.Recipe;
+import com.github.italomded.recipesapi.domain.recipe.RecipeIngredient;
+import com.github.italomded.recipesapi.domain.user.ApplicationUser;
 import org.junit.jupiter.api.*;
 
 import java.lang.reflect.Field;
@@ -103,5 +107,27 @@ public class RecipeTest {
         recipeEmpty.addRecipeIngredient(new RecipeIngredient());
         Assertions.assertEquals(1, recipeEmpty.getIngredientsOfRecipe().size());
         Assertions.assertEquals(1, recipeEmpty.getIngredientsOfRecipe().get(0).getSequence());
+    }
+
+    @Test
+    void shouldLikeAndUnlikeARecipe() {
+        Recipe recipe = new Recipe();
+        ApplicationUser user = new ApplicationUser();
+        recipe.likeRecipe(user);
+
+        Assertions.assertEquals(1, recipe.getLikes());
+        recipe.likeRecipe(user);
+
+        Assertions.assertEquals(0, recipe.getLikes());
+    }
+
+    @Test
+    void shouldNotRemoveTheImageIfItIsTheOnlyFormOfTheRecipe() {
+        Recipe recipe = new Recipe();
+        Image image = new Image();
+        recipe.addImage(image);
+
+        Assertions.assertEquals(1, recipe.getImages().size());
+        Assertions.assertFalse(recipe.removeImage(image));
     }
 }
