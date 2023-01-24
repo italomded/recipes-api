@@ -57,7 +57,7 @@ public class RecipeController {
     public ResponseEntity<RecipeDetailedDTO> getRecipe(@PathVariable long id, UriComponentsBuilder uriComponentsBuilder) {
         Recipe recipe = recipeService.getRecipeById(id);
         URI recipeImagesURI = uriComponentsBuilder.path("/api/recipe/image/{id}").buildAndExpand(recipe.getID()).toUri();
-        URI recipeIngredientsURI = uriComponentsBuilder.path("/api/recipe/ingredient/{id}").buildAndExpand(recipe.getID()).toUri();
+        URI recipeIngredientsURI = uriComponentsBuilder.replacePath("/api/recipe/ingredient/{id}").buildAndExpand(recipe.getID()).toUri();
         return ResponseEntity.ok(new RecipeDetailedDTO(recipe, recipeImagesURI, recipeIngredientsURI));
     }
 

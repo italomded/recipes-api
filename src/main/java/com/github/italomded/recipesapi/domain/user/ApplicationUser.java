@@ -25,6 +25,7 @@ public class ApplicationUser implements UserDetails {
     @Column(nullable = false) @Setter
     private String password;
 
+    @ManyToOne
     @JoinColumn(nullable = false) @Getter @Setter
     private Role role;
 
