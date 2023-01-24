@@ -1,9 +1,22 @@
-# Functional requirements
-- Users must be able to create a recipe;
-- A user author of a recipe must be able to edit and exclude her;
-- The system must ensure that a recipe have at least 3 recipe ingredients;
-- The system must ensure that recipe ingredient list of a recipe be in ascending order of sequence;
-- The system should allow viewing of recipes;
-- The system should allow searching for recipes filtering by ingredients;
-- The system should allow searching for recipes by filtering by type of ingredient;
-- 
+# Recipes API
+
+Cooking recipes REST API. Created to practice learning.
+
+## Docs
+Docs are available on:
+- `/api/docs` for JSON version;
+- `/api/docs/ui` for Swagger-UI version.
+
+## Main libs
+- Spring Web;
+- Spring Security;
+- Spring Data;
+- Lombok;
+- OAuth0 JWT;
+- JUnit;
+- Mockito;
+- Bean Validation;
+- SpringDoc (OpenAPI 3).
+
+## TODO
+- Filters on recipes search.

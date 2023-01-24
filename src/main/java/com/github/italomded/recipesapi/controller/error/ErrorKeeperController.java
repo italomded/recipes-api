@@ -5,6 +5,7 @@ import com.github.italomded.recipesapi.dto.error.SimpleErrorResponseDTO;
 import com.github.italomded.recipesapi.service.exception.BusinessRuleException;
 import com.github.italomded.recipesapi.service.exception.DataValidationException;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.data.mapping.PropertyReferenceException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -34,9 +35,10 @@ public class ErrorKeeperController {
         return ResponseEntity.badRequest().body(errorResponseDTO);
     }
 
-    @ExceptionHandler(value = {EntityNotFoundException.class})
-    public ResponseEntity error404Repository(EntityNotFoundException exception) {
-        String message = exception.getMessage().replace("com.github.italomded.recipesapi.domain.", "");
+    @ExceptionHandler(value = {EntityNotFoundException.class, PropertyReferenceException.class})
+    public ResponseEntity error404Many(Exception exception) {
+        String message = exception.getMessage().replace("com.github.italomded.recipesapi.domain.user.", "");
+        message = message.replace("com.github.italomded.recipesapi.domain.recipe.", "");
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new SimpleErrorResponseDTO(message));
     }
 }
