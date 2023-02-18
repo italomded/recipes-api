@@ -33,7 +33,7 @@ public class ImageService {
         Image image = imageRepository.getReferenceById(imageID);
         RecipeService.verifyIfIsTheAuthor(image.getRecipe(), userAuthor);
 
-        image.setImageBytes(form.bytes());
+        image.setLink(form.link());
         imageRepository.save(image);
         return image;
     }
@@ -43,7 +43,7 @@ public class ImageService {
         Recipe recipe = recipeRepository.getReferenceById(recipeID);
         RecipeService.verifyIfIsTheAuthor(recipe, userAuthor);
 
-        Image image = new Image(form.bytes(), recipe);
+        Image image = new Image(form.link(), recipe);
         recipe.addImage(image);
 
         recipeRepository.save(recipe);

@@ -16,7 +16,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.net.URI;
 
 @RestController
-@RequestMapping("api/ingredient")
+@RequestMapping("api/ingredients")
 public class IngredientController {
     private IngredientService ingredientService;
 
@@ -43,7 +43,7 @@ public class IngredientController {
     @Secured("ROLE_ADM")
     public ResponseEntity<IngredientDTO> createIngredient(@RequestBody @Valid IngredientForm form, UriComponentsBuilder uriComponentsBuilder) {
         Ingredient ingredient = ingredientService.createIngredient(form);
-        URI location = uriComponentsBuilder.path("/api/ingredient").build().toUri();
+        URI location = uriComponentsBuilder.path("/api/ingredients").build().toUri();
         return ResponseEntity.created(location).body(new IngredientDTO(ingredient));
     }
 

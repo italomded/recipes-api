@@ -24,7 +24,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.net.URI;
 
 @RestController
-@RequestMapping("api/user")
+@RequestMapping("api/users")
 public class ApplicationUserController {
     @Autowired
     private AuthenticationManager authenticationManager;

@@ -1,7 +1,7 @@
 spring:
   datasource:
     password: 12345
-    url: jdbc:mysql://localhost:3306/recipes_db
+    url: jdbc:mysql://localhost:3306/recipes_db?createDatabaseIfNotExist=true
     username: root
     driverClassName: com.mysql.cj.jdbc.Driver
   jpa:

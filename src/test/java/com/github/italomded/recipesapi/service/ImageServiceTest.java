@@ -34,16 +34,16 @@ public class ImageServiceTest {
 
     @Test
     void shouldEditAImage() {
-        Image image = new Image("0x12345".getBytes(), RecipeServiceTest.createRecipe());
+        Image image = new Image("www.someimages.com/niceimage", RecipeServiceTest.createRecipe());
 
         Mockito.when(imageRepository.getReferenceById(Mockito.anyLong()))
                 .thenReturn(image);
 
-        ImageForm form = new ImageForm("0x12345".getBytes());
+        ImageForm form = new ImageForm("www.someimages.com/niceimage");
         imageService.editImage(1L, form, image.getRecipe().getCreatorUser());
 
         Mockito.verify(imageRepository).save(Mockito.any());
-        Assertions.assertEquals(form.bytes(), image.getImageBytes());
+        Assertions.assertEquals(form.link(), image.getLink());
     }
 
     @Test
@@ -51,7 +51,7 @@ public class ImageServiceTest {
         Mockito.when(imageRepository.getReferenceById(Mockito.anyLong()))
                 .thenThrow(EntityNotFoundException.class);
 
-        ImageForm form = new ImageForm("0x12345".getBytes());
+        ImageForm form = new ImageForm("www.someimages.com/niceimage");
         Assertions.assertThrows(EntityNotFoundException.class, () -> imageService.editImage(1L, form, new ApplicationUser()));
     }
 
@@ -67,13 +67,13 @@ public class ImageServiceTest {
         Mockito.when(imageRepository.save(Mockito.any()))
                 .thenReturn(image);
 
-        ImageForm form = new ImageForm("0x12345".getBytes());
+        ImageForm form = new ImageForm("www.someimages.com/niceimage");
         imageService.createImage(1L, form, recipe.getCreatorUser());
 
         Mockito.verify(imageRepository).save(captor.capture());
         Image imageCaptured = captor.getValue();
 
-        Assertions.assertEquals(form.bytes(), imageCaptured.getImageBytes());
+        Assertions.assertEquals(form.link(), imageCaptured.getLink());
     }
 
     @Test
@@ -81,15 +81,15 @@ public class ImageServiceTest {
         Mockito.when(recipeRepository.getReferenceById(Mockito.anyLong()))
                 .thenThrow(EntityNotFoundException.class);
 
-        ImageForm form = new ImageForm("0x12345".getBytes());
+        ImageForm form = new ImageForm("www.someimages.com/niceimage");
         Assertions.assertThrows(EntityNotFoundException.class, () -> imageService.createImage(1L, form, new ApplicationUser()));
     }
 
     @Test
     void shouldDeleteAImage() throws IllegalAccessException, NoSuchFieldException {
         Recipe recipe = RecipeServiceTest.createRecipe();
-        Image image1 = new Image("0x12345".getBytes(), recipe);
-        Image image2 = new Image("0x12345".getBytes(), recipe);
+        Image image1 = new Image("www.someimages.com/niceimage", recipe);
+        Image image2 = new Image("www.someimages.com/niceimage", recipe);
         Field id = Image.class.getDeclaredField("ID");
         id.setAccessible(true);
         id.set(image1, 1L);
@@ -111,7 +111,7 @@ public class ImageServiceTest {
     @Test
     void shouldThrowAExceptionOnDeleteImageIfRecipeHaveLessThanFourImages() {
         Recipe recipe = RecipeServiceTest.createRecipe();
-        Image image = new Image("0x12345".getBytes(), recipe);
+        Image image = new Image("www.someimages.com/niceimage", recipe);
         recipe.addImage(image);
 
         Mockito.when(imageRepository.getReferenceById(Mockito.anyLong()))

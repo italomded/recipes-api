@@ -87,16 +87,16 @@ INSERT INTO recipe_ingredient (id, instruction, prepare_minutes, amount, measure
 INSERT INTO recipe_ingredient (id, instruction, prepare_minutes, amount, measure, `sequence`, ingredient_id, recipe_id)
 	VALUES (25, 'Do this and to that', 7, 1, 'L', 5, 5, 5);
 
-INSERT INTO image (id, image_bytes, recipe_id) VALUES(1, 0x12345, 1);
-INSERT INTO image (id, image_bytes, recipe_id) VALUES(2, 0x12345, 1);
-INSERT INTO image (id, image_bytes, recipe_id) VALUES(3, 0x12345, 2);
-INSERT INTO image (id, image_bytes, recipe_id) VALUES(4, 0x12345, 2);
-INSERT INTO image (id, image_bytes, recipe_id) VALUES(5, 0x12345, 3);
-INSERT INTO image (id, image_bytes, recipe_id) VALUES(6, 0x12345, 3);
-INSERT INTO image (id, image_bytes, recipe_id) VALUES(7, 0x12345, 4);
-INSERT INTO image (id, image_bytes, recipe_id) VALUES(8, 0x12345, 4);
-INSERT INTO image (id, image_bytes, recipe_id) VALUES(9, 0x12345, 5);
-INSERT INTO image (id, image_bytes, recipe_id) VALUES(10, 0x12345, 5);
+INSERT INTO image (id, link, recipe_id) VALUES(1, "www.someimages.com/niceimage", 1);
+INSERT INTO image (id, link, recipe_id) VALUES(2, "www.someimages.com/niceimage", 1);
+INSERT INTO image (id, link, recipe_id) VALUES(3, "www.someimages.com/niceimage", 2);
+INSERT INTO image (id, link, recipe_id) VALUES(4, "www.someimages.com/niceimage", 2);
+INSERT INTO image (id, link, recipe_id) VALUES(5, "www.someimages.com/niceimage", 3);
+INSERT INTO image (id, link, recipe_id) VALUES(6, "www.someimages.com/niceimage", 3);
+INSERT INTO image (id, link, recipe_id) VALUES(7, "www.someimages.com/niceimage", 4);
+INSERT INTO image (id, link, recipe_id) VALUES(8, "www.someimages.com/niceimage", 4);
+INSERT INTO image (id, link, recipe_id) VALUES(9, "www.someimages.com/niceimage", 5);
+INSERT INTO image (id, link, recipe_id) VALUES(10,"www.someimages.com/niceimage", 5);
 
 INSERT INTO user_like_recipe (user_id, recipe_id) VALUES(6, 1);
 INSERT INTO user_like_recipe (user_id, recipe_id) VALUES(7, 2);

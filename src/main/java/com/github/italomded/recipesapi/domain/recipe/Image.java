@@ -14,12 +14,12 @@ public class Image {
     private Long ID;
 
     @Column(nullable = false) @Getter @Setter
-    private byte[] imageBytes;
+    private String link;
     @JoinColumn(nullable = false) @ManyToOne @Getter
     private Recipe recipe;
 
-    public Image(byte[] imageBytes, Recipe recipe) {
-        this.imageBytes = imageBytes;
+    public Image(String link, Recipe recipe) {
+        this.link = link;
         this.recipe = recipe;
     }
 }

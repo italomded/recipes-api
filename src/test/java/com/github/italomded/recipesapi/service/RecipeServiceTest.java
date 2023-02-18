@@ -5,9 +5,7 @@ import com.github.italomded.recipesapi.domain.recipe.Measure;
 import com.github.italomded.recipesapi.domain.recipe.Recipe;
 import com.github.italomded.recipesapi.domain.user.ApplicationUser;
 import com.github.italomded.recipesapi.dto.form.*;
-import com.github.italomded.recipesapi.repository.ApplicationUserRepository;
-import com.github.italomded.recipesapi.repository.IngredientRepository;
-import com.github.italomded.recipesapi.repository.RecipeRepository;
+import com.github.italomded.recipesapi.repository.*;
 import com.github.italomded.recipesapi.service.exception.BusinessRuleException;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.AfterEach;
@@ -27,6 +25,12 @@ public class RecipeServiceTest {
     @Mock
     private ApplicationUserRepository applicationUserRepository;
 
+    @Mock
+    private ImageRepository imageRepository;
+
+    @Mock
+    private RecipeIngredientRepository recipeIngredientRepository;
+
     @InjectMocks
     private RecipeService recipeService;
 
@@ -42,8 +46,6 @@ public class RecipeServiceTest {
 
     @Test
     void shouldCreateARecipe() {
-        Mockito.when(applicationUserRepository.findById(Mockito.anyLong()))
-                .thenReturn(Optional.of(new ApplicationUser()));
         Mockito.when(ingredientRepository.getReferenceById(Mockito.anyLong()))
                 .thenReturn(new Ingredient());
 
@@ -54,19 +56,20 @@ public class RecipeServiceTest {
         RecipeCreateForm form = createRecipeForm();
         recipeService.createRecipe(form, new ApplicationUser());
 
-        Mockito.verify(recipeRepository).save(captor.capture());
-        recipe = captor.getValue();
-
+        Mockito.verify(recipeRepository, Mockito.atMost(2)).save(captor.capture());
+        recipe = captor.getAllValues().get(0);
         Assertions.assertEquals(form.title(), recipe.getTitle());
         Assertions.assertEquals(form.description(), recipe.getDescription());
+
+        recipe = captor.getAllValues().get(1);
         Assertions.assertEquals(1, recipe.getImages().size());
         Assertions.assertEquals(3, recipe.getIngredientsOfRecipe().size());
     }
 
     @Test
     void shouldThrowExceptionIfIngredientDoesntExistOnCreateRecipe() {
-        Mockito.when(applicationUserRepository.findById(Mockito.anyLong()))
-                .thenReturn(Optional.of(new ApplicationUser()));
+        Mockito.when(recipeRepository.save(Mockito.any()))
+                .thenReturn(new Recipe());
         Mockito.when(ingredientRepository.getReferenceById(Mockito.anyLong()))
                 .thenThrow(EntityNotFoundException.class);
 
@@ -132,7 +135,7 @@ public class RecipeServiceTest {
 
     private RecipeCreateForm createRecipeForm() {
         ImageForm[] images = {
-                new ImageForm("0x12345".getBytes()), new ImageForm("0x12345".getBytes()), new ImageForm("0x12345".getBytes())
+                new ImageForm("www.someimages.com/niceimage"), new ImageForm("www.someimages.com/niceimage"), new ImageForm("www.someimages.com/niceimage")
         };
         RecipeIngredientCreateWithRecipeForm[] recipeIngredients = {
                 new RecipeIngredientCreateWithRecipeForm(1L, 50.0, Measure.G, "Do this and do that", 5),

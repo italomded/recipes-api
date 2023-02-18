@@ -26,7 +26,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.net.URI;
 
 @RestController
-@RequestMapping("api/recipe")
+@RequestMapping("api/recipes")
 public class RecipeController {
     private RecipeService recipeService;
     private RecipeIngredientService recipeIngredientService;
@@ -56,19 +56,19 @@ public class RecipeController {
     @GetMapping("{id}")
     public ResponseEntity<RecipeDetailedDTO> getRecipe(@PathVariable long id, UriComponentsBuilder uriComponentsBuilder) {
         Recipe recipe = recipeService.getRecipeById(id);
-        URI recipeImagesURI = uriComponentsBuilder.path("/api/recipe/image/{id}").buildAndExpand(recipe.getID()).toUri();
-        URI recipeIngredientsURI = uriComponentsBuilder.replacePath("/api/recipe/ingredient/{id}").buildAndExpand(recipe.getID()).toUri();
+        URI recipeImagesURI = uriComponentsBuilder.path("/api/recipes/images/{id}").buildAndExpand(recipe.getID()).toUri();
+        URI recipeIngredientsURI = uriComponentsBuilder.replacePath("/api/recipes/ingredients/{id}").buildAndExpand(recipe.getID()).toUri();
         return ResponseEntity.ok(new RecipeDetailedDTO(recipe, recipeImagesURI, recipeIngredientsURI));
     }
 
-    @GetMapping("ingredient/{id}")
+    @GetMapping("ingredients/{id}")
     public ResponseEntity<Page<RecipeIngredientDTO>> getIngredientsOfRecipe(@PathVariable long id, @PageableDefault(sort = {"sequence"}) Pageable pageable) {
         Page<RecipeIngredient> recipeIngredients = recipeIngredientService.getRecipeIngredientsByRecipeId(pageable, id);
         Page<RecipeIngredientDTO> recipeIngredientDTO = recipeIngredients.map(RecipeIngredientDTO::new);
         return ResponseEntity.ok(recipeIngredientDTO);
     }
 
-    @GetMapping("image/{id}")
+    @GetMapping("images/{id}")
     public ResponseEntity<Page<ImageDTO>> getImagesOfRecipe(@PathVariable long id, Pageable pageable) {
         Page<Image> images = imageService.getImagesByRecipeId(pageable, id);
         Page<ImageDTO> imagesDTO = images.map(ImageDTO::new);
@@ -93,7 +93,7 @@ public class RecipeController {
     public ResponseEntity<RecipeDTO> createRecipe(@RequestBody @Valid RecipeCreateForm form, UriComponentsBuilder uriComponentsBuilder) {
         ApplicationUser user = (ApplicationUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Recipe recipe = recipeService.createRecipe(form, user);
-        URI location = uriComponentsBuilder.path("/api/recipe/{id}").buildAndExpand(recipe.getID()).toUri();
+        URI location = uriComponentsBuilder.path("/api/recipes/{id}").buildAndExpand(recipe.getID()).toUri();
         return ResponseEntity.created(location).body(new RecipeDTO(recipe));
     }
 

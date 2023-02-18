@@ -3,9 +3,7 @@ package com.github.italomded.recipesapi.service;
 import com.github.italomded.recipesapi.domain.recipe.*;
 import com.github.italomded.recipesapi.domain.user.ApplicationUser;
 import com.github.italomded.recipesapi.dto.form.*;
-import com.github.italomded.recipesapi.repository.ApplicationUserRepository;
-import com.github.italomded.recipesapi.repository.IngredientRepository;
-import com.github.italomded.recipesapi.repository.RecipeRepository;
+import com.github.italomded.recipesapi.repository.*;
 import com.github.italomded.recipesapi.service.exception.BusinessRuleException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,12 +15,18 @@ import org.springframework.stereotype.Service;
 public class RecipeService {
     private RecipeRepository recipeRepository;
     private IngredientRepository ingredientRepository;
+    private RecipeIngredientRepository recipeIngredientRepository;
+    private ImageRepository imageRepository;
     private ApplicationUserRepository applicationUserRepository;
 
     @Autowired
-    public RecipeService(RecipeRepository recipeRepository, IngredientRepository ingredientRepository, ApplicationUserRepository applicationUserRepository) {
+    public RecipeService(RecipeRepository recipeRepository, IngredientRepository ingredientRepository,
+                         RecipeIngredientRepository recipeIngredientRepository, ImageRepository imageRepository,
+                         ApplicationUserRepository applicationUserRepository) {
         this.recipeRepository = recipeRepository;
         this.ingredientRepository = ingredientRepository;
+        this.recipeIngredientRepository = recipeIngredientRepository;
+        this.imageRepository = imageRepository;
         this.applicationUserRepository = applicationUserRepository;
     }
 
@@ -53,9 +57,12 @@ public class RecipeService {
     @Transactional
     public Recipe createRecipe(RecipeCreateForm form, ApplicationUser userAuthor) {
         Recipe recipe = new Recipe(form.title(), form.description(), userAuthor);
+        recipe = recipeRepository.save(recipe);
+
         for (ImageForm imageForm : form.images()) {
-            Image image = new Image(imageForm.bytes(), recipe);
+            Image image = new Image(imageForm.link(), recipe);
             recipe.addImage(image);
+            imageRepository.save(image);
         }
 
         for (RecipeIngredientCreateWithRecipeForm recipeIngredientForm : form.ingredients()) {
@@ -67,6 +74,7 @@ public class RecipeService {
             );
             ingredient.addRecipeIngredient(recipeIngredient);
             recipe.addRecipeIngredient(recipeIngredient);
+            recipeIngredientRepository.save(recipeIngredient);
         }
 
         recipe = recipeRepository.save(recipe);

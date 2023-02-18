@@ -13,7 +13,7 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("api/role")
+@RequestMapping("api/roles")
 public class RoleController {
     @Autowired
     private RoleService roleService;
@@ -25,8 +25,7 @@ public class RoleController {
         return ResponseEntity.ok(allRolesDTO);
     }
 
-    @GetMapping("api/role/{id}")
-    @Secured("ROLE_ADM")
+    @GetMapping("{id}")
     public ResponseEntity<Page<ApplicationUserDTO>> getUsersInRole(@PathVariable long id, Pageable pageable) {
         Page<ApplicationUser> allUsers = roleService.getUsersInRole(id, pageable);
         Page<ApplicationUserDTO> allUsersDTO = allUsers.map(ApplicationUserDTO::new);

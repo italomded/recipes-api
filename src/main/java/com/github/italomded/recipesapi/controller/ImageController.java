@@ -15,7 +15,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.net.URI;
 
 @RestController
-@RequestMapping("api/image")
+@RequestMapping("api/images")
 public class ImageController {
     private ImageService imageService;
 
@@ -37,7 +37,7 @@ public class ImageController {
         ApplicationUser user = (ApplicationUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Image image = imageService.createImage(recipeId, form, user);
 
-        URI location = uriComponentsBuilder.path("/api/recipe/{id}").buildAndExpand(image.getRecipe().getID()).toUri();
+        URI location = uriComponentsBuilder.path("/api/recipes/{id}").buildAndExpand(image.getRecipe().getID()).toUri();
         return ResponseEntity.created(location).body(new ImageDTO(image));
     }
 
