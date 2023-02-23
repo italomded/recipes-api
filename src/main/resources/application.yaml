@@ -1,8 +1,8 @@
 spring:
   datasource:
-    password: 12345
-    url: jdbc:mysql://localhost:3306/recipes_db?createDatabaseIfNotExist=true
-    username: root
+    password: ${API_DATASOURCE_PASSWORD:12345}
+    url: jdbc:mysql://${API_DATASOURCE_URL:localhost}:3306/recipes_db?createDatabaseIfNotExist=true
+    username: ${API_DATASOURCE_USERNAME:root}
     driverClassName: com.mysql.cj.jdbc.Driver
   jpa:
     show-sql: true
@@ -19,7 +19,7 @@ server:
 api:
   security:
     jwt:
-      secret: ${JWT_SECRET:123456789}
+      secret: ${API_JWT_SECRET:123456789}
       issuer: recipes_api
 springdoc:
   swagger-ui:

@@ -36,18 +36,31 @@ public class RecipeTest {
     }
 
     @Test
-    void shouldRemoveAndReorganizeRecipeIngredients() {
+    void shouldRemoveAndReorganizeRecipeIngredients() throws IllegalAccessException {
         RecipeIngredient recipeIngredient = recipe.getIngredientsOfRecipe().get(1);
-        recipe.removeRecipeIngredient(recipeIngredient);
+        RecipeIngredient recipeIngredientToAdd = new RecipeIngredient();
+        recipeIngredientID.set(recipeIngredientToAdd, 10L);
+        recipe.addRecipeIngredient(recipeIngredientToAdd);
+        boolean result = recipe.removeRecipeIngredient(recipeIngredient);
 
-        Assertions.assertEquals(2, recipe.getIngredientsOfRecipe().size());
+        Assertions.assertEquals(true, result);
+        Assertions.assertEquals(3, recipe.getIngredientsOfRecipe().size());
         Assertions.assertEquals(1, recipe.getIngredientsOfRecipe().get(0).getSequence());
         Assertions.assertEquals(2, recipe.getIngredientsOfRecipe().get(1).getSequence());
+        Assertions.assertEquals(3, recipe.getIngredientsOfRecipe().get(2).getSequence());
 
         recipeIngredient = recipe.getIngredientsOfRecipe().get(0);
         recipe.removeRecipeIngredient(recipeIngredient);
 
         Assertions.assertEquals(1, recipe.getIngredientsOfRecipe().get(0).getSequence());
+    }
+
+    @Test
+    void shouldNotRemoveImagesIfHaveOnlyThree() {
+        RecipeIngredient recipeIngredient = recipe.getIngredientsOfRecipe().get(1);
+        boolean result = recipe.removeRecipeIngredient(recipeIngredient);
+        Assertions.assertEquals(3, recipe.getIngredientsOfRecipe().size());
+        Assertions.assertEquals(false, result);
     }
 
     @Test
