@@ -1,0 +1,17 @@
+spring:
+  datasource:
+    password: ${API_DATASOURCE_PASSWORD}
+    url: jdbc:mysql://${API_DATASOURCE_URL}:${API_DATASOURCE_PORT}/recipes_db?createDatabaseIfNotExist=true
+    username: ${API_DATASOURCE_USERNAME}
+  jpa:
+    show-sql: false
+    hibernate:
+      ddl-auto: update
+  sql:
+    init:
+      mode: never
+api:
+  security:
+    jwt:
+      secret: ${API_JWT_SECRET}
+      issuer: recipes_api

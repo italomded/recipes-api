@@ -1,13 +1,13 @@
 spring:
   datasource:
     password: ${API_DATASOURCE_PASSWORD:12345}
-    url: jdbc:mysql://${API_DATASOURCE_URL:localhost}:3306/recipes_db?createDatabaseIfNotExist=true
+    url: jdbc:mysql://${API_DATASOURCE_URL:localhost}:${API_DATASOURCE_PORT:3306}/recipes_db?createDatabaseIfNotExist=true
     username: ${API_DATASOURCE_USERNAME:root}
     driverClassName: com.mysql.cj.jdbc.Driver
   jpa:
     show-sql: true
     hibernate:
-      ddl-auto: create
+      ddl-auto: create-drop
       dialect: org.hibernate.dialect.MySQLDialect
     defer-datasource-initialization: true
   sql:
@@ -19,7 +19,7 @@ server:
 api:
   security:
     jwt:
-      secret: ${API_JWT_SECRET:123456789}
+      secret: ${API_JWT_SECRET:b51f369f61781a6077b83ffda82a21a4}
       issuer: recipes_api
 springdoc:
   swagger-ui:
