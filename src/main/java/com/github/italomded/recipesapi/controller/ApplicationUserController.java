@@ -8,6 +8,8 @@ import com.github.italomded.recipesapi.dto.form.UserForm;
 import com.github.italomded.recipesapi.dto.authentication.TokenDTO;
 import com.github.italomded.recipesapi.security.TokenService;
 import com.github.italomded.recipesapi.service.ApplicationUserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -67,6 +69,7 @@ public class ApplicationUserController {
     }
 
     @PutMapping
+    @Operation(security = { @SecurityRequirement(name = "bearer-key") })
     public ResponseEntity<ApplicationUserDTO> updateUserPassword(@RequestBody @Valid UserChangePasswordForm form) {
         ApplicationUser user = (ApplicationUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         user = applicationUserService.changeUserPassword(form, user);
@@ -75,6 +78,7 @@ public class ApplicationUserController {
     }
 
     @DeleteMapping("{id}")
+    @Operation(security = { @SecurityRequirement(name = "bearer-key") })
     @Secured("ROLE_ADM")
     public ResponseEntity deleteUser(@PathVariable long id) {
         applicationUserService.deleteUser(id);

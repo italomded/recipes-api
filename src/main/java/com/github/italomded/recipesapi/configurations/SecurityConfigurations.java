@@ -1,5 +1,6 @@
-package com.github.italomded.recipesapi.security;
+package com.github.italomded.recipesapi.configurations;
 
+import com.github.italomded.recipesapi.security.AuthorizationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

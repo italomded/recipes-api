@@ -13,6 +13,8 @@ import com.github.italomded.recipesapi.dto.form.RecipeEditForm;
 import com.github.italomded.recipesapi.service.ImageService;
 import com.github.italomded.recipesapi.service.RecipeIngredientService;
 import com.github.italomded.recipesapi.service.RecipeService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -76,6 +78,7 @@ public class RecipeController {
     }
 
     @PutMapping("{id}")
+    @Operation(security = { @SecurityRequirement(name = "bearer-key") })
     public ResponseEntity<RecipeDTO> editRecipe(@PathVariable long id, @RequestBody @Valid RecipeEditForm form) {
         ApplicationUser user = (ApplicationUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Recipe recipe = recipeService.editRecipe(id, form, user);
@@ -83,6 +86,7 @@ public class RecipeController {
     }
 
     @PatchMapping("{id}")
+    @Operation(security = { @SecurityRequirement(name = "bearer-key") })
     public ResponseEntity likeRecipe(@PathVariable long id) {
         ApplicationUser user = (ApplicationUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         recipeService.likeRecipe(id, user);
@@ -90,6 +94,7 @@ public class RecipeController {
     }
 
     @PostMapping
+    @Operation(security = { @SecurityRequirement(name = "bearer-key") })
     public ResponseEntity<RecipeDTO> createRecipe(@RequestBody @Valid RecipeCreateForm form, UriComponentsBuilder uriComponentsBuilder) {
         ApplicationUser user = (ApplicationUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Recipe recipe = recipeService.createRecipe(form, user);
@@ -98,6 +103,7 @@ public class RecipeController {
     }
 
     @DeleteMapping("{id}")
+    @Operation(security = { @SecurityRequirement(name = "bearer-key") })
     public ResponseEntity deleteRecipe(@PathVariable long id) {
         ApplicationUser user = (ApplicationUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         recipeService.deleteRecipe(id, user);

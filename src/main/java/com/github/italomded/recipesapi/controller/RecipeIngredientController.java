@@ -6,6 +6,8 @@ import com.github.italomded.recipesapi.dto.RecipeIngredientDTO;
 import com.github.italomded.recipesapi.dto.form.RecipeIngredientCreateWithSequenceForm;
 import com.github.italomded.recipesapi.dto.form.RecipeIngredientEditForm;
 import com.github.italomded.recipesapi.service.RecipeIngredientService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +19,7 @@ import java.net.URI;
 
 @RestController
 @RequestMapping("api/recipe-ingredients")
+@SecurityRequirement(name = "bearer-key")
 public class RecipeIngredientController {
     private RecipeIngredientService recipeIngredientService;
 

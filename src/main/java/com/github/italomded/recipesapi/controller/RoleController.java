@@ -5,6 +5,8 @@ import com.github.italomded.recipesapi.domain.user.Role;
 import com.github.italomded.recipesapi.dto.ApplicationUserDTO;
 import com.github.italomded.recipesapi.dto.RoleDTO;
 import com.github.italomded.recipesapi.service.RoleService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -33,6 +35,7 @@ public class RoleController {
     }
 
     @PutMapping("{roleId}/{userId}")
+    @Operation(security = { @SecurityRequirement(name = "bearer-key") })
     @Secured("ROLE_ADM")
     public ResponseEntity<ApplicationUserDTO> putRole(@PathVariable long roleId, @PathVariable long userId) {
         ApplicationUser user = roleService.changeUserRole(roleId, userId);

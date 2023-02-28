@@ -5,6 +5,7 @@ import com.github.italomded.recipesapi.domain.recipe.Image;
 import com.github.italomded.recipesapi.dto.ImageDTO;
 import com.github.italomded.recipesapi.dto.form.ImageForm;
 import com.github.italomded.recipesapi.service.ImageService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ import java.net.URI;
 
 @RestController
 @RequestMapping("api/images")
+@SecurityRequirement(name = "bearer-key")
 public class ImageController {
     private ImageService imageService;
 

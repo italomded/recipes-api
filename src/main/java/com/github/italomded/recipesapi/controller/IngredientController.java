@@ -4,6 +4,8 @@ import com.github.italomded.recipesapi.domain.recipe.Ingredient;
 import com.github.italomded.recipesapi.dto.IngredientDTO;
 import com.github.italomded.recipesapi.dto.form.IngredientForm;
 import com.github.italomded.recipesapi.service.IngredientService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -34,6 +36,7 @@ public class IngredientController {
 
     @PutMapping("{id}")
     @Secured("ROLE_ADM")
+    @Operation(security = { @SecurityRequirement(name = "bearer-key") })
     public ResponseEntity<IngredientDTO> editRecipe(@PathVariable long id, @RequestBody @Valid IngredientForm form) {
         Ingredient ingredient = ingredientService.editIngredient(id, form);
         return ResponseEntity.ok(new IngredientDTO(ingredient));
@@ -41,6 +44,7 @@ public class IngredientController {
 
     @PostMapping
     @Secured("ROLE_ADM")
+    @Operation(security = { @SecurityRequirement(name = "bearer-key") })
     public ResponseEntity<IngredientDTO> createIngredient(@RequestBody @Valid IngredientForm form, UriComponentsBuilder uriComponentsBuilder) {
         Ingredient ingredient = ingredientService.createIngredient(form);
         URI location = uriComponentsBuilder.path("/api/ingredients").build().toUri();
@@ -49,6 +53,7 @@ public class IngredientController {
 
     @DeleteMapping("{id}")
     @Secured("ROLE_ADM")
+    @Operation(security = { @SecurityRequirement(name = "bearer-key") })
     public ResponseEntity deleteIngredient(@PathVariable long id) {
         ingredientService.deleteIngredient(id);
         return ResponseEntity.noContent().build();
