@@ -2,7 +2,7 @@ package com.github.italomded.recipesapi.service;
 
 import com.github.italomded.recipesapi.domain.recipe.*;
 import com.github.italomded.recipesapi.domain.user.ApplicationUser;
-import com.github.italomded.recipesapi.dto.form.RecipeIngredientCreateForm;
+import com.github.italomded.recipesapi.dto.form.RecipeIngredientCreateWithSequenceForm;
 import com.github.italomded.recipesapi.dto.form.RecipeIngredientEditForm;
 import com.github.italomded.recipesapi.repository.IngredientRepository;
 import com.github.italomded.recipesapi.repository.RecipeIngredientRepository;
@@ -45,7 +45,7 @@ public class RecipeIngredientServiceTest {
         Mockito.when(recipeIngredientRepository.save(Mockito.any()))
                 .thenReturn(recipeIngredientWithId);
 
-        RecipeIngredientCreateForm form = createRecipeIngredientCreateForm();
+        RecipeIngredientCreateWithSequenceForm form = createRecipeIngredientCreateForm();
         recipeIngredientService.createRecipeIngredient(Mockito.anyLong(),form, recipe.getCreatorUser());
 
         Mockito.verify(recipeIngredientRepository).save(captor.capture());
@@ -55,15 +55,15 @@ public class RecipeIngredientServiceTest {
         Assertions.assertEquals(recipe, recipeIngredient.getRecipe());
         Assertions.assertEquals(ingredient, recipeIngredient.getIngredient());
         Assertions.assertTrue(recipe.getIngredientsOfRecipe().contains(recipeIngredient));
-        Assertions.assertEquals(form.amount(), recipeIngredient.getQuantity().getAmount());
-        Assertions.assertEquals(form.measure(), recipeIngredient.getQuantity().getMeasure());
-        Assertions.assertEquals(form.instruction(), recipeIngredient.getInstruction());
-        Assertions.assertEquals(form.prepareMinutes(), recipeIngredient.getPrepareMinutes());
+        Assertions.assertEquals(form.getAmount(), recipeIngredient.getQuantity().getAmount());
+        Assertions.assertEquals(form.getMeasure(), recipeIngredient.getQuantity().getMeasure());
+        Assertions.assertEquals(form.getInstruction(), recipeIngredient.getInstruction());
+        Assertions.assertEquals(form.getPrepareMinute(), recipeIngredient.getPrepareMinutes());
     }
 
     @Test
     void shouldThrowAExceptionOnCreateRecipeIngredientIfFatherEntitiesNeededDoesntExists() {
-        RecipeIngredientCreateForm form = createRecipeIngredientCreateForm();
+        RecipeIngredientCreateWithSequenceForm form = createRecipeIngredientCreateForm();
 
         Mockito.when(recipeRepository.getReferenceById(Mockito.anyLong()))
                 .thenThrow(EntityNotFoundException.class);
@@ -148,12 +148,12 @@ public class RecipeIngredientServiceTest {
         closeable.close();
     }
 
-    private RecipeIngredientCreateForm createRecipeIngredientCreateForm() {
-        RecipeIngredientCreateForm form = new RecipeIngredientCreateForm(
-                1L,
-                10.0, Measure.TEASPON,
-                "Do this and do that",
-                5, 4);
+    private RecipeIngredientCreateWithSequenceForm createRecipeIngredientCreateForm() {
+        RecipeIngredientCreateWithSequenceForm form = new RecipeIngredientCreateWithSequenceForm(
+                10.0,
+                Measure.TEASPON, "Do this and do that",
+                5,
+                1L, 4);
         return form;
     }
 

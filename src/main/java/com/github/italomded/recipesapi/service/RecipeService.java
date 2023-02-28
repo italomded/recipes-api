@@ -65,12 +65,12 @@ public class RecipeService {
             imageRepository.save(image);
         }
 
-        for (RecipeIngredientCreateWithRecipeForm recipeIngredientForm : form.ingredients()) {
-            Ingredient ingredient = ingredientRepository.getReferenceById(recipeIngredientForm.ingredientID());
-            Quantity quantity = new Quantity(recipeIngredientForm.amount(), recipeIngredientForm.measure());
+        for (RecipeIngredientCreateForm recipeIngredientForm : form.ingredients()) {
+            Ingredient ingredient = ingredientRepository.getReferenceById(recipeIngredientForm.getIngredientID());
+            Quantity quantity = new Quantity(recipeIngredientForm.getAmount(), recipeIngredientForm.getMeasure());
             RecipeIngredient recipeIngredient = new RecipeIngredient(
-                    recipe, ingredient, quantity, recipeIngredientForm.instruction(),
-                    recipeIngredientForm.prepareMinutes()
+                    recipe, ingredient, quantity, recipeIngredientForm.getInstruction(),
+                    recipeIngredientForm.getPrepareMinutes()
             );
             ingredient.addRecipeIngredient(recipeIngredient);
             recipe.addRecipeIngredient(recipeIngredient);

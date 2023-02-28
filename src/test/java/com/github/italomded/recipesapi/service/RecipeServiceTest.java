@@ -15,7 +15,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.*;
 
 import java.lang.reflect.Field;
-import java.util.Optional;
 
 public class RecipeServiceTest {
     @Mock
@@ -137,10 +136,10 @@ public class RecipeServiceTest {
         ImageForm[] images = {
                 new ImageForm("www.someimages.com/niceimage"), new ImageForm("www.someimages.com/niceimage"), new ImageForm("www.someimages.com/niceimage")
         };
-        RecipeIngredientCreateWithRecipeForm[] recipeIngredients = {
-                new RecipeIngredientCreateWithRecipeForm(1L, 50.0, Measure.G, "Do this and do that", 5),
-                new RecipeIngredientCreateWithRecipeForm(2L, 2.0, Measure.KG, "Do this and do that", 5),
-                new RecipeIngredientCreateWithRecipeForm(3L, 20.0, Measure.MG, "Do this and do that", 5)
+        RecipeIngredientCreateForm[] recipeIngredients = {
+                new RecipeIngredientCreateForm(50.0, Measure.G, "Do this and do that", 5, 1L),
+                new RecipeIngredientCreateForm(2.0, Measure.KG, "Do this and do that", 5, 2L),
+                new RecipeIngredientCreateForm(20.0, Measure.MG, "Do this and do that", 5, 3L)
         };
         return new RecipeCreateForm(images, "Simple title", "Simple description", recipeIngredients);
     }

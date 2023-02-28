@@ -5,7 +5,7 @@ import com.github.italomded.recipesapi.domain.recipe.Quantity;
 import com.github.italomded.recipesapi.domain.recipe.Recipe;
 import com.github.italomded.recipesapi.domain.recipe.RecipeIngredient;
 import com.github.italomded.recipesapi.domain.user.ApplicationUser;
-import com.github.italomded.recipesapi.dto.form.RecipeIngredientCreateForm;
+import com.github.italomded.recipesapi.dto.form.RecipeIngredientCreateWithSequenceForm;
 import com.github.italomded.recipesapi.dto.form.RecipeIngredientEditForm;
 import com.github.italomded.recipesapi.repository.IngredientRepository;
 import com.github.italomded.recipesapi.repository.RecipeIngredientRepository;
@@ -40,26 +40,26 @@ public class RecipeIngredientService {
         RecipeIngredient recipeIngredient = recipeIngredientRepository.getReferenceById(recipeIngredientID);
         RecipeService.verifyIfIsTheAuthor(recipeIngredient.getRecipe(), userAuthor);
 
-        recipeIngredient.setInstruction(form.instruction());
-        recipeIngredient.setPrepareMinutes(form.prepareMinutes());
-        recipeIngredient.setPrepareMinutes(form.prepareMinutes());
-        recipeIngredient.getQuantity().setAmount(form.amount());
-        recipeIngredient.getQuantity().setMeasure(form.measure());
+        recipeIngredient.setInstruction(form.getInstruction());
+        recipeIngredient.setPrepareMinutes(form.getPrepareMinutes());
+        recipeIngredient.setPrepareMinutes(form.getPrepareMinutes());
+        recipeIngredient.getQuantity().setAmount(form.getAmount());
+        recipeIngredient.getQuantity().setMeasure(form.getMeasure());
 
         recipeIngredientRepository.save(recipeIngredient);
         return recipeIngredient;
     }
 
     @Transactional
-    public RecipeIngredient createRecipeIngredient(Long recipeID, RecipeIngredientCreateForm form, ApplicationUser userAuthor) {
+    public RecipeIngredient createRecipeIngredient(Long recipeID, RecipeIngredientCreateWithSequenceForm form, ApplicationUser userAuthor) {
         Recipe recipe = recipeRepository.getReferenceById(recipeID);
         RecipeService.verifyIfIsTheAuthor(recipe, userAuthor);
 
-        Ingredient ingredient = ingredientRepository.getReferenceById(form.ingredientID());
+        Ingredient ingredient = ingredientRepository.getReferenceById(form.getIngredientID());
 
-        Quantity quantity = new Quantity(form.amount(), form.measure());
+        Quantity quantity = new Quantity(form.getAmount(), form.getMeasure());
         RecipeIngredient recipeIngredient = new RecipeIngredient(
-                recipe, ingredient, quantity, form.instruction(), form.prepareMinutes(), form.sequence()
+                recipe, ingredient, quantity, form.getInstruction(), form.getPrepareMinutes(), form.getSequence()
                 );
         ingredient.addRecipeIngredient(recipeIngredient);
         recipe.addRecipeIngredient(recipeIngredient);

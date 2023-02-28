@@ -43,7 +43,7 @@ public class ApplicationUserController {
     @GetMapping("{id}")
     public ResponseEntity<ApplicationUserDetailedDTO> getUser(@PathVariable long id, UriComponentsBuilder uriComponentsBuilder) {
         ApplicationUser user = applicationUserService.getUserById(id);
-        URI userRecipesURI = uriComponentsBuilder.path("/api/recipe/user/{id}").buildAndExpand(user.getID()).toUri();
+        URI userRecipesURI = uriComponentsBuilder.path("/api/recipes/user/{id}").buildAndExpand(user.getID()).toUri();
         return ResponseEntity.ok(new ApplicationUserDetailedDTO(user, userRecipesURI));
     }
 
@@ -62,7 +62,7 @@ public class ApplicationUserController {
     public ResponseEntity<ApplicationUserDTO> createUser(@RequestBody @Valid UserForm form, UriComponentsBuilder uriComponentsBuilder) {
         ApplicationUser applicationUser = applicationUserService.createUser(form);
 
-        URI location = uriComponentsBuilder.path("/api/user/{id}").buildAndExpand(applicationUser.getID()).toUri();
+        URI location = uriComponentsBuilder.path("/api/users/{id}").buildAndExpand(applicationUser.getID()).toUri();
         return ResponseEntity.created(location).body(new ApplicationUserDTO(applicationUser));
     }
 

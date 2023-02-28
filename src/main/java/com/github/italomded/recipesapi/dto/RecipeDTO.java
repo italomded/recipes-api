@@ -1,15 +1,21 @@
 package com.github.italomded.recipesapi.dto;
 
 import com.github.italomded.recipesapi.domain.recipe.Recipe;
+import lombok.Getter;
 
-public record RecipeDTO (long id, long creatorUserId, String title, String description, int likes) {
+@Getter
+public class RecipeDTO {
+    private long id;
+    private long creatorUserId;
+    private String title;
+    private String description;
+    private int likes;
+
     public RecipeDTO(Recipe recipe) {
-        this(
-                recipe.getID(),
-                recipe.getCreatorUser().getID(),
-                recipe.getTitle(),
-                recipe.getDescription(),
-                recipe.getLikes()
-                );
+        this.id = recipe.getID();
+        this.creatorUserId = recipe.getCreatorUser().getID();
+        this.title = recipe.getTitle();
+        this.description = recipe.getDescription();
+        this.likes = recipe.getLikes();
     }
 }

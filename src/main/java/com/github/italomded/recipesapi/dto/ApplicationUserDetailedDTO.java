@@ -1,11 +1,29 @@
 package com.github.italomded.recipesapi.dto;
 
 import com.github.italomded.recipesapi.domain.user.ApplicationUser;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.net.URI;
 
-public record ApplicationUserDetailedDTO(long id, String username, RoleDTO role, URI recipes) {
+@Getter
+@Setter
+@NoArgsConstructor
+public class ApplicationUserDetailedDTO extends ApplicationUserDTO {
+    private RoleDTO role;
+    private URI recipes;
+
     public ApplicationUserDetailedDTO(ApplicationUser applicationUser, URI recipes) {
-        this(applicationUser.getID(), applicationUser.getUsername(), new RoleDTO(applicationUser.getRole()), recipes);
+        super(applicationUser);
+        this.role = new RoleDTO(applicationUser.getRole());
+        this.recipes = recipes;
+    }
+
+    public ApplicationUserDetailedDTO(ApplicationUser applicationUser, RoleDTO role, URI recipes) {
+        super(applicationUser);
+        this.role = role;
+        this.recipes = recipes;
     }
 }

@@ -2,14 +2,22 @@ package com.github.italomded.recipesapi.dto.form;
 
 import com.github.italomded.recipesapi.domain.recipe.Measure;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-public record RecipeIngredientEditForm(
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class RecipeIngredientEditForm {
         @NotNull
-        Double amount,
+        private Double amount;
         @NotNull
-        Measure measure,
+        private Measure measure;
         @NotNull
-        String instruction,
+        private String instruction;
         @NotNull
-        Integer prepareMinutes
-) { }
+        private Integer prepareMinutes;
+}

@@ -3,7 +3,7 @@ package com.github.italomded.recipesapi.controller;
 import com.github.italomded.recipesapi.domain.user.ApplicationUser;
 import com.github.italomded.recipesapi.domain.recipe.RecipeIngredient;
 import com.github.italomded.recipesapi.dto.RecipeIngredientDTO;
-import com.github.italomded.recipesapi.dto.form.RecipeIngredientCreateForm;
+import com.github.italomded.recipesapi.dto.form.RecipeIngredientCreateWithSequenceForm;
 import com.github.italomded.recipesapi.dto.form.RecipeIngredientEditForm;
 import com.github.italomded.recipesapi.service.RecipeIngredientService;
 import jakarta.validation.Valid;
@@ -34,7 +34,7 @@ public class RecipeIngredientController {
     }
 
     @PostMapping("{recipeId}")
-    public ResponseEntity<RecipeIngredientDTO> createRecipeIngredient(@PathVariable long recipeId, @RequestBody @Valid RecipeIngredientCreateForm form,
+    public ResponseEntity<RecipeIngredientDTO> createRecipeIngredient(@PathVariable long recipeId, @RequestBody @Valid RecipeIngredientCreateWithSequenceForm form,
                                                                       UriComponentsBuilder uriComponentsBuilder) {
         ApplicationUser user = (ApplicationUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         RecipeIngredient recipeIngredient = recipeIngredientService.createRecipeIngredient(recipeId, form, user);
