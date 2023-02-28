@@ -58,7 +58,7 @@ public class RecipeIngredientServiceTest {
         Assertions.assertEquals(form.getAmount(), recipeIngredient.getQuantity().getAmount());
         Assertions.assertEquals(form.getMeasure(), recipeIngredient.getQuantity().getMeasure());
         Assertions.assertEquals(form.getInstruction(), recipeIngredient.getInstruction());
-        Assertions.assertEquals(form.getPrepareMinute(), recipeIngredient.getPrepareMinutes());
+        Assertions.assertEquals(form.getPrepareMinutes(), recipeIngredient.getPrepareMinutes());
     }
 
     @Test
@@ -86,10 +86,10 @@ public class RecipeIngredientServiceTest {
         recipeIngredientService.editRecipeIngredient(1L, form, recipeIngredient.getRecipe().getCreatorUser());
 
         Mockito.verify(recipeIngredientRepository).save(Mockito.any());
-        Assertions.assertEquals(form.prepareMinutes(), recipeIngredient.getPrepareMinutes());
-        Assertions.assertEquals(form.amount(), recipeIngredient.getQuantity().getAmount());
-        Assertions.assertEquals(form.measure(), recipeIngredient.getQuantity().getMeasure());
-        Assertions.assertEquals(form.instruction(), recipeIngredient.getInstruction());
+        Assertions.assertEquals(form.getPrepareMinutes(), recipeIngredient.getPrepareMinutes());
+        Assertions.assertEquals(form.getAmount(), recipeIngredient.getQuantity().getAmount());
+        Assertions.assertEquals(form.getMeasure(), recipeIngredient.getQuantity().getMeasure());
+        Assertions.assertEquals(form.getInstruction(), recipeIngredient.getInstruction());
     }
 
     @Test
