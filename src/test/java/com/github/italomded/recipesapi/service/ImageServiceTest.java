@@ -36,7 +36,8 @@ public class ImageServiceTest {
     }
 
     @Test
-    void shouldEditAImage() {
+    @DisplayName("Should successfully edit an image")
+    void scenario1() {
         //given
         ApplicationUser applicationUser = applicationUserBuilder.create().withId(1L).build();
         Recipe recipe = recipeBuilder.create().withId(1L).withCreatorUser(applicationUser).build();
@@ -56,7 +57,8 @@ public class ImageServiceTest {
     }
 
     @Test
-    void shouldThrowAExceptionIfImageIdDoesntExistsOnEditImage() {
+    @DisplayName("Should throw an exception if image id does not exist when editing image")
+    void scenario2() {
         //given
         ApplicationUser applicationUser = applicationUserBuilder.create().withId(1L).build();
         ImageForm form = createRecipeForm();
@@ -70,7 +72,8 @@ public class ImageServiceTest {
     }
 
     @Test
-    void shouldCreateAImage() {
+    @DisplayName("Should successfully create an image")
+    void scenario3() {
         //given
         ApplicationUser applicationUser = applicationUserBuilder.create().withId(1L).build();
         Recipe recipe = recipeBuilder.create().withId(1L).withCreatorUser(applicationUser).build();
@@ -93,7 +96,8 @@ public class ImageServiceTest {
     }
 
     @Test
-    void shouldThrowAExceptionIfRecipeIdDoesntExistsOnCreateImage() {
+    @DisplayName("It should throw an exception if the recipe does not exist when creating an image")
+    void scenario4() {
         //given
         ApplicationUser applicationUser = applicationUserBuilder.create().withId(1L).build();
         ImageForm form = createRecipeForm();
@@ -107,7 +111,8 @@ public class ImageServiceTest {
     }
 
     @Test
-    void shouldDeleteAImage() {
+    @DisplayName("Should delete an image if there are at least two in the recipe")
+    void scenario5() {
         //given
         ApplicationUser applicationUser = applicationUserBuilder.create().withId(1L).build();
         Recipe recipe = recipeBuilder.create().withId(1L).withCreatorUser(applicationUser).build();
