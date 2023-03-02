@@ -24,10 +24,6 @@ public class ImageServiceTest {
     private ImageService imageService;
     @Captor
     private ArgumentCaptor<Image> captor;
-
-    private ImageBuilder imageBuilder = new ImageBuilder();
-    private RecipeBuilder recipeBuilder = new RecipeBuilder();
-    private ApplicationUserBuilder applicationUserBuilder = new ApplicationUserBuilder();
     private AutoCloseable closeable;
 
     @BeforeEach
@@ -39,9 +35,9 @@ public class ImageServiceTest {
     @DisplayName("Should successfully edit an image")
     void scenario1() {
         //given
-        ApplicationUser applicationUser = applicationUserBuilder.create().withId(1L).build();
-        Recipe recipe = recipeBuilder.create().withId(1L).withCreatorUser(applicationUser).build();
-        Image image = imageBuilder.create().withId(1L).withLink("www.someimages.com/anotherImage").withRecipe(recipe).build();
+        ApplicationUser applicationUser = ApplicationUserBuilder.builder().withId(1L).build();
+        Recipe recipe = RecipeBuilder.builder().withId(1L).withCreatorUser(applicationUser).build();
+        Image image = ImageBuilder.builder().withId(1L).withLink("www.someimages.com/anotherImage").withRecipe(recipe).build();
 
         Mockito.when(imageRepository.getReferenceById(Mockito.anyLong()))
                 .thenReturn(image);
@@ -60,7 +56,7 @@ public class ImageServiceTest {
     @DisplayName("Should throw an exception if image id does not exist when editing image")
     void scenario2() {
         //given
-        ApplicationUser applicationUser = applicationUserBuilder.create().withId(1L).build();
+        ApplicationUser applicationUser = ApplicationUserBuilder.builder().withId(1L).build();
         ImageForm form = createRecipeForm();
 
         //when
@@ -75,8 +71,8 @@ public class ImageServiceTest {
     @DisplayName("Should successfully create an image")
     void scenario3() {
         //given
-        ApplicationUser applicationUser = applicationUserBuilder.create().withId(1L).build();
-        Recipe recipe = recipeBuilder.create().withId(1L).withCreatorUser(applicationUser).build();
+        ApplicationUser applicationUser = ApplicationUserBuilder.builder().withId(1L).build();
+        Recipe recipe = RecipeBuilder.builder().withId(1L).withCreatorUser(applicationUser).build();
 
         Mockito.when(recipeRepository.getReferenceById(Mockito.anyLong()))
                 .thenReturn(recipe);
@@ -99,7 +95,7 @@ public class ImageServiceTest {
     @DisplayName("It should throw an exception if the recipe does not exist when creating an image")
     void scenario4() {
         //given
-        ApplicationUser applicationUser = applicationUserBuilder.create().withId(1L).build();
+        ApplicationUser applicationUser = ApplicationUserBuilder.builder().withId(1L).build();
         ImageForm form = createRecipeForm();
 
         //when
@@ -114,11 +110,11 @@ public class ImageServiceTest {
     @DisplayName("Should delete an image if there are at least two in the recipe")
     void scenario5() {
         //given
-        ApplicationUser applicationUser = applicationUserBuilder.create().withId(1L).build();
-        Recipe recipe = recipeBuilder.create().withId(1L).withCreatorUser(applicationUser).build();
+        ApplicationUser applicationUser = ApplicationUserBuilder.builder().withId(1L).build();
+        Recipe recipe = RecipeBuilder.builder().withId(1L).withCreatorUser(applicationUser).build();
 
-        Image image1 = imageBuilder.create().withRecipe(recipe).withId(1L).build();
-        Image image2 = imageBuilder.create().withRecipe(recipe).withId(2L).build();
+        Image image1 = ImageBuilder.builder().withRecipe(recipe).withId(1L).build();
+        Image image2 = ImageBuilder.builder().withRecipe(recipe).withId(2L).build();
 
         recipe.addImage(image1);
         recipe.addImage(image2);
@@ -139,10 +135,10 @@ public class ImageServiceTest {
     @DisplayName("Should throw an exception when deleting an image if the recipe only has it")
     void scenario6() {
         //given
-        ApplicationUser applicationUser = applicationUserBuilder.create().withId(1L).build();
-        Recipe recipe = recipeBuilder.create().withId(1L).withCreatorUser(applicationUser).build();
+        ApplicationUser applicationUser = ApplicationUserBuilder.builder().withId(1L).build();
+        Recipe recipe = RecipeBuilder.builder().withId(1L).withCreatorUser(applicationUser).build();
 
-        Image image = imageBuilder.create().withId(1L).withRecipe(recipe).build();
+        Image image = ImageBuilder.builder().withId(1L).withRecipe(recipe).build();
         recipe.addImage(image);
 
         Mockito.when(imageRepository.getReferenceById(Mockito.anyLong()))

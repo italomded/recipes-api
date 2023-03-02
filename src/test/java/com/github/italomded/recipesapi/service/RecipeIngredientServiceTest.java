@@ -1,5 +1,9 @@
 package com.github.italomded.recipesapi.service;
 
+import com.github.italomded.recipesapi.builder.ApplicationUserBuilder;
+import com.github.italomded.recipesapi.builder.IngredientBuilder;
+import com.github.italomded.recipesapi.builder.RecipeBuilder;
+import com.github.italomded.recipesapi.builder.RecipeIngredientBuilder;
 import com.github.italomded.recipesapi.domain.recipe.*;
 import com.github.italomded.recipesapi.domain.user.ApplicationUser;
 import com.github.italomded.recipesapi.dto.form.RecipeIngredientCreateWithSequenceForm;
@@ -24,7 +28,6 @@ public class RecipeIngredientServiceTest {
     private RecipeIngredientService recipeIngredientService;
     @Captor
     private ArgumentCaptor<RecipeIngredient> captor;
-
     private AutoCloseable closeable;
 
     @BeforeEach
@@ -33,25 +36,29 @@ public class RecipeIngredientServiceTest {
     }
 
     @Test
-    void shouldCreateARecipeIngredient() {
-        Recipe recipe = RecipeServiceTest.createRecipe();
-        Ingredient ingredient = new Ingredient();
-        RecipeIngredient recipeIngredientWithId = new RecipeIngredient();
+    @DisplayName("Should successfully create a recipe ingredient")
+    void scenario1() {
+        //given
+        ApplicationUser applicationUser = ApplicationUserBuilder.builder().withId(1L).build();
+        Recipe recipe = RecipeBuilder.builder().withId(1L).withCreatorUser(applicationUser).build();
+        Ingredient ingredient = IngredientBuilder.builder().withId(1L).build();
+        var form = createRecipeIngredientCreateForm();
 
         Mockito.when(recipeRepository.getReferenceById(Mockito.anyLong()))
                 .thenReturn(recipe);
         Mockito.when(ingredientRepository.getReferenceById(Mockito.anyLong()))
                 .thenReturn(ingredient);
         Mockito.when(recipeIngredientRepository.save(Mockito.any()))
-                .thenReturn(recipeIngredientWithId);
+                .thenReturn(new RecipeIngredient());
 
-        RecipeIngredientCreateWithSequenceForm form = createRecipeIngredientCreateForm();
-        recipeIngredientService.createRecipeIngredient(Mockito.anyLong(),form, recipe.getCreatorUser());
+        //when
+        recipeIngredientService.createRecipeIngredient(recipe.getID(),form, applicationUser);
 
+        //then
         Mockito.verify(recipeIngredientRepository).save(captor.capture());
         Mockito.verify(recipeRepository).save(recipe);
-
         RecipeIngredient recipeIngredient = captor.getValue();
+
         Assertions.assertEquals(recipe, recipeIngredient.getRecipe());
         Assertions.assertEquals(ingredient, recipeIngredient.getIngredient());
         Assertions.assertTrue(recipe.getIngredientsOfRecipe().contains(recipeIngredient));
@@ -62,29 +69,54 @@ public class RecipeIngredientServiceTest {
     }
 
     @Test
-    void shouldThrowAExceptionOnCreateRecipeIngredientIfFatherEntitiesNeededDoesntExists() {
-        RecipeIngredientCreateWithSequenceForm form = createRecipeIngredientCreateForm();
-
+    @DisplayName("Should throw an exception when creating a recipe ingredient without an existing recipe")
+    void scenario2() {
+        //given
+        var form = createRecipeIngredientCreateForm();
         Mockito.when(recipeRepository.getReferenceById(Mockito.anyLong()))
                 .thenThrow(EntityNotFoundException.class);
         Mockito.when(ingredientRepository.getReferenceById(Mockito.anyLong()))
                 .thenThrow(EntityNotFoundException.class);
 
-        Assertions.assertThrows(EntityNotFoundException.class, () -> recipeIngredientService.createRecipeIngredient(1L, form, new ApplicationUser()));
+        //when,then
+        Assertions.assertThrows(EntityNotFoundException.class,
+                () -> recipeIngredientService.createRecipeIngredient(1L, form, new ApplicationUser()));
     }
 
     @Test
-    void shouldEditRecipeIngredient() {
-        RecipeIngredient recipeIngredient = new RecipeIngredient(
-                RecipeServiceTest.createRecipe(), null, new Quantity(), null, null
-        );
+    @DisplayName("Should throw an exception when creating a recipe ingredient without an existing ingredient")
+    void scenario3() {
+        //given
+        ApplicationUser applicationUser = ApplicationUserBuilder.builder().withId(1L).build();
+        Recipe recipe = RecipeBuilder.builder().withId(1L).withCreatorUser(applicationUser).build();
+        var form = createRecipeIngredientCreateForm();
+
+        Mockito.when(recipeRepository.getReferenceById(Mockito.anyLong()))
+                .thenReturn(recipe);
+        Mockito.when(ingredientRepository.getReferenceById(Mockito.anyLong()))
+                .thenThrow(EntityNotFoundException.class);
+
+        //when,then
+        Assertions.assertThrows(EntityNotFoundException.class,
+                () -> recipeIngredientService.createRecipeIngredient(recipe.getID(), form, applicationUser));
+    }
+
+    @Test
+    @DisplayName("Should successfully edit a recipe ingredient")
+    void scenario4() {
+        //given
+        ApplicationUser applicationUser = ApplicationUserBuilder.builder().withId(1L).build();
+        Recipe recipe = RecipeBuilder.builder().withId(1L).withCreatorUser(applicationUser).build();
+        RecipeIngredient recipeIngredient = RecipeIngredientBuilder.builder().withId(1L).withRecipe(recipe).build();
+        var form = createRecipeIngredientEditForm();
 
         Mockito.when(recipeIngredientRepository.getReferenceById(Mockito.anyLong()))
                 .thenReturn(recipeIngredient);
 
-        RecipeIngredientEditForm form = createRecipeIngredientEditForm();
-        recipeIngredientService.editRecipeIngredient(1L, form, recipeIngredient.getRecipe().getCreatorUser());
+        //when
+        recipeIngredientService.editRecipeIngredient(recipeIngredient.getID(), form, applicationUser);
 
+        //then
         Mockito.verify(recipeIngredientRepository).save(Mockito.any());
         Assertions.assertEquals(form.getPrepareMinutes(), recipeIngredient.getPrepareMinutes());
         Assertions.assertEquals(form.getAmount(), recipeIngredient.getQuantity().getAmount());
@@ -93,55 +125,78 @@ public class RecipeIngredientServiceTest {
     }
 
     @Test
-    void shouldThrowAExceptionOnEditRecipeIngredientIfIdDoesntExists() {
+    @DisplayName("Should throw an exception when editing a recipe ingredient whose ID does not exist")
+    void scenario5() {
+        //given
         Mockito.when(recipeIngredientRepository.getReferenceById(Mockito.anyLong()))
                 .thenThrow(EntityNotFoundException.class);
+        var form = createRecipeIngredientEditForm();
 
-        RecipeIngredientEditForm form = createRecipeIngredientEditForm();
-        Assertions.assertThrows(EntityNotFoundException.class, () -> recipeIngredientService.editRecipeIngredient(1L, form, new ApplicationUser()));
+        //when,then
+        Assertions.assertThrows(EntityNotFoundException.class,
+                () -> recipeIngredientService.editRecipeIngredient(1L, form, new ApplicationUser()));
     }
 
     @Test
-    void shouldDeleteARecipeIngredient() {
-        Recipe recipe = RecipeServiceTest.createRecipe();
-        recipe.addRecipeIngredient(new RecipeIngredient());
-        recipe.addRecipeIngredient(new RecipeIngredient());
-        recipe.addRecipeIngredient(new RecipeIngredient());
+    @DisplayName("You must successfully delete a recipe ingredient if the recipe has more than 3 ingredients")
+    void scenario6() {
+        //given
+        ApplicationUser applicationUser = ApplicationUserBuilder.builder().withId(1L).build();
+        Recipe recipe = RecipeBuilder.builder().withId(1L).withCreatorUser(applicationUser)
+                .withRecipeIngredient(RecipeIngredientBuilder.builder().withId(1L).build())
+                .withRecipeIngredient(RecipeIngredientBuilder.builder().withId(2L).build())
+                .withRecipeIngredient(RecipeIngredientBuilder.builder().withId(3L).build())
+                .build();
+        var recipeListSize = recipe.getIngredientsOfRecipe().size();
 
-        RecipeIngredient recipeIngredient = new RecipeIngredient(recipe, null, null, null, null);
+        RecipeIngredient recipeIngredient = RecipeIngredientBuilder.builder().withId(4L).withRecipe(recipe).build();
         recipe.addRecipeIngredient(recipeIngredient);
 
-        Mockito.when(recipeIngredientRepository.getReferenceById(Mockito.anyLong()))
+        Mockito.when(recipeIngredientRepository.getReferenceById(recipeIngredient.getID()))
                 .thenReturn(recipeIngredient);
 
-        recipeIngredientService.deleteRecipeIngredient(1L, recipe.getCreatorUser());
+        //when
+        recipeIngredientService.deleteRecipeIngredient(recipeIngredient.getID(), applicationUser);
 
-        Mockito.verify(recipeRepository).save(Mockito.any());
-        Mockito.verify(recipeIngredientRepository).delete(Mockito.any());
-        Assertions.assertEquals(3, recipe.getIngredientsOfRecipe().size());
+        //then
+        Mockito.verify(recipeRepository).save(recipe);
+        Mockito.verify(recipeIngredientRepository).delete(recipeIngredient);
+        Assertions.assertEquals(recipeListSize, recipe.getIngredientsOfRecipe().size());
     }
 
     @Test
-    void shouldThrowAExceptionOnDeleteARecipeIngredientIfIdDoesntExist() {
-        Mockito.when(recipeIngredientRepository.getReferenceById(Mockito.anyLong()))
-                .thenThrow(EntityNotFoundException.class);
-
-        Assertions.assertThrows(EntityNotFoundException.class, () -> recipeIngredientService.deleteRecipeIngredient(1L, new ApplicationUser()));
-    }
-
-    @Test
+    @DisplayName("Should throw an exception when trying to delete a recipe ingredient if the recipe has at least 3 ingredients")
     void shouldThrowAExceptionOnDeleteRecipeIngredientIfRecipeHaveLessThanFourIngredients() {
-        Recipe recipe = RecipeServiceTest.createRecipe();
-        recipe.addRecipeIngredient(new RecipeIngredient());
-
-        RecipeIngredient recipeIngredient = new RecipeIngredient(recipe, null, null, null, null);
+        //given
+        ApplicationUser applicationUser = ApplicationUserBuilder.builder().withId(1L).build();
+        Recipe recipe = RecipeBuilder.builder().withId(1L).withCreatorUser(applicationUser)
+                .withRecipeIngredient(RecipeIngredientBuilder.builder().withId(1L).build())
+                .withRecipeIngredient(RecipeIngredientBuilder.builder().withId(2L).build())
+                .build();
+        RecipeIngredient recipeIngredient = RecipeIngredientBuilder.builder().withId(1L).withRecipe(recipe).build();
         recipe.addRecipeIngredient(recipeIngredient);
 
-        Mockito.when(recipeIngredientRepository.getReferenceById(Mockito.anyLong()))
+        Mockito.when(recipeIngredientRepository.getReferenceById(recipeIngredient.getID()))
                 .thenReturn(recipeIngredient);
 
-        Assertions.assertThrows(BusinessRuleException.class, () -> recipeIngredientService.deleteRecipeIngredient(1L, recipe.getCreatorUser()));
+        //when,then
+        Assertions.assertThrows(BusinessRuleException.class,
+                () -> recipeIngredientService.deleteRecipeIngredient(recipeIngredient.getID(), applicationUser));
     }
+
+    @Test
+    @DisplayName("Should throw an exception when trying to delete a recipe ingredient with an ID that doesn't exist")
+    void shouldThrowAExceptionOnDeleteARecipeIngredientIfIdDoesntExist() {
+        //given
+        Mockito.when(recipeIngredientRepository.getReferenceById(Mockito.anyLong()))
+                .thenThrow(EntityNotFoundException.class);
+
+        //when,then
+        Assertions.assertThrows(EntityNotFoundException.class,
+                () -> recipeIngredientService.deleteRecipeIngredient(1L, new ApplicationUser()));
+    }
+
+
 
     @AfterEach
     public void closeMocks() throws Exception {
@@ -149,7 +204,7 @@ public class RecipeIngredientServiceTest {
     }
 
     private RecipeIngredientCreateWithSequenceForm createRecipeIngredientCreateForm() {
-        RecipeIngredientCreateWithSequenceForm form = new RecipeIngredientCreateWithSequenceForm(
+        var form = new RecipeIngredientCreateWithSequenceForm(
                 10.0,
                 Measure.TEASPON, "Do this and do that",
                 5,
@@ -158,7 +213,11 @@ public class RecipeIngredientServiceTest {
     }
 
     private RecipeIngredientEditForm createRecipeIngredientEditForm() {
-        RecipeIngredientEditForm form = new RecipeIngredientEditForm(10.0, Measure.TEASPON, "Do this and do that!", 10);
+        var form = new RecipeIngredientEditForm(
+                10.0,
+                Measure.TEASPON,
+                "Do this and do that!",
+                10);
         return form;
     }
 }

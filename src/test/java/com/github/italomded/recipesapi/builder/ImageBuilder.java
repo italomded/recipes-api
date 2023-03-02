@@ -11,20 +11,20 @@ public class ImageBuilder {
     private Field idField;
     private Field recipeField;
 
-    public ImageBuilder() {
+    private ImageBuilder() {
         try {
             idField = Image.class.getDeclaredField("ID");
             idField.setAccessible(true);
             recipeField = Image.class.getDeclaredField("recipe");
             recipeField.setAccessible(true);
+            image = new Image();
         } catch (NoSuchFieldException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public ImageBuilder create() {
-        image = new Image();
-        return this;
+    public static ImageBuilder builder() {
+        return new ImageBuilder();
     }
 
     public ImageBuilder withLink(String link) {
@@ -51,8 +51,6 @@ public class ImageBuilder {
     }
 
     public Image build() {
-        Image returnImage = image;
-        image = null;
-        return returnImage;
+        return image;
     }
 }

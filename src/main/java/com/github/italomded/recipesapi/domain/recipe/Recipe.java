@@ -2,10 +2,7 @@ package com.github.italomded.recipesapi.domain.recipe;
 
 import com.github.italomded.recipesapi.domain.user.ApplicationUser;
 import jakarta.persistence.*;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.*;
 

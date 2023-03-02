@@ -1,5 +1,6 @@
 package com.github.italomded.recipesapi.service;
 
+import com.github.italomded.recipesapi.builder.IngredientBuilder;
 import com.github.italomded.recipesapi.domain.recipe.Ingredient;
 import com.github.italomded.recipesapi.domain.recipe.TypeOfIngredient;
 import com.github.italomded.recipesapi.dto.form.IngredientForm;
@@ -12,10 +13,8 @@ import org.mockito.*;
 public class IngredientServiceTest {
     @Mock
     private IngredientRepository ingredientRepository;
-
     @InjectMocks
     private IngredientService ingredientService;
-
     private AutoCloseable closeable;
 
     @Captor
@@ -27,17 +26,19 @@ public class IngredientServiceTest {
     }
 
     @Test
-    void shouldCreateAIngredient() {
-        IngredientForm form = new IngredientForm("apple", TypeOfIngredient.FRUITS);
-        Ingredient ingredient = new Ingredient();
-
+    @DisplayName("Should successfully create a ingredient")
+    void scenario1() {
+        //given
         Mockito.when(ingredientRepository.save(Mockito.any()))
-                .thenReturn(ingredient);
+                .thenReturn(new Ingredient());
         Mockito.when(ingredientRepository.existsByName(Mockito.any()))
                 .thenReturn(false);
+        IngredientForm form = createIngredientForm();
 
+        //when
         ingredientService.createIngredient(form);
 
+        //then
         Mockito.verify(ingredientRepository).save(captor.capture());
         Ingredient ingredientCaptured = captor.getValue();
 
@@ -46,66 +47,88 @@ public class IngredientServiceTest {
     }
 
     @Test
-    void shouldThrowAExceptionOnCreateIngredientIfNameIsNotUnique() {
-        Ingredient ingredient = new Ingredient("apple", TypeOfIngredient.FRUITS);
-        IngredientForm form = new IngredientForm("Apple", TypeOfIngredient.FRUITS);
-
+    @DisplayName("Should throw an exception when trying to create an ingredient whose name is not unique")
+    void scenario2() {
+        //given
+        IngredientForm form = createIngredientForm();
         Mockito.when(ingredientRepository.existsByName(Mockito.any()))
                 .thenReturn(true);
 
+        //when,then
         Assertions.assertThrows(DataValidationException.class, () -> ingredientService.createIngredient(form));
     }
 
     @Test
-    void shouldEditAIngredient() {
-        Ingredient ingredient = new Ingredient("bread", TypeOfIngredient.CARBOHYDRATES);
-        IngredientForm form = new IngredientForm("apple", TypeOfIngredient.FRUITS);
+    @DisplayName("Should successfully edit an ingredient")
+    void scenario3() {
+        //given
+        Ingredient ingredient = IngredientBuilder.builder().withId(1L).withName("bread").build();
+        IngredientForm form = createIngredientForm();
 
-        Mockito.when(ingredientRepository.getReferenceById(Mockito.any()))
+        Mockito.when(ingredientRepository.getReferenceById(ingredient.getID()))
                 .thenReturn(ingredient);
         Mockito.when(ingredientRepository.save(Mockito.any()))
                 .thenReturn(ingredient);
 
-        ingredientService.editIngredient(1L, form);
+        //when
+        ingredientService.editIngredient(ingredient.getID(), form);
 
+        //then
         Mockito.verify(ingredientRepository).save(Mockito.any());
         Assertions.assertEquals(form.name(), ingredient.getName());
         Assertions.assertEquals(form.type(), ingredient.getCategory());
     }
 
     @Test
-    void shouldThrowAExceptionOnEditIngredientIfNameIsNotUnique() {
-        Ingredient ingredient = new Ingredient("bread", TypeOfIngredient.CARBOHYDRATES);
-        IngredientForm form = new IngredientForm("apple", TypeOfIngredient.FRUITS);
+    @DisplayName("Should throw exception when editing ingredient if new name is not unique")
+    void scenario4() {
+        //given
+        Ingredient ingredient = IngredientBuilder.builder().withId(1L).withName("bread").build();
+        IngredientForm form = createIngredientForm();
 
-        Mockito.when(ingredientRepository.getReferenceById(Mockito.any()))
+        Mockito.when(ingredientRepository.getReferenceById(ingredient.getID()))
                 .thenReturn(ingredient);
-        Mockito.when(ingredientRepository.existsByName(Mockito.any()))
+        Mockito.when(ingredientRepository.existsByName(form.name()))
                 .thenReturn(true);
 
-        Assertions.assertThrows(DataValidationException.class, () -> ingredientService.editIngredient(1L, form));
+        //when,then
+        Assertions.assertThrows(DataValidationException.class,
+                () -> ingredientService.editIngredient(ingredient.getID(), form));
     }
 
     @Test
-    void shouldDeleteAIngredient() {
-        Ingredient ingredient = new Ingredient("bread", TypeOfIngredient.CARBOHYDRATES);
-
-        Mockito.when(ingredientRepository.getReferenceById(Mockito.any()))
+    @DisplayName("Should successfully delete an image")
+    void scenario5() {
+        //given
+        Ingredient ingredient = IngredientBuilder.builder().withId(1L).withName("bread").build();
+        Mockito.when(ingredientRepository.getReferenceById(ingredient.getID()))
                 .thenReturn(ingredient);
 
-        ingredientService.deleteIngredient(1L);
-        Mockito.verify(ingredientRepository).delete(Mockito.any());
+        //when
+        ingredientService.deleteIngredient(ingredient.getID());
+
+        //then
+        Mockito.verify(ingredientRepository).delete(ingredient);
     }
 
     @Test
-    void shouldThrowAExceptionOnDeleteIngredientIfDoesntExists() {
-        Mockito.when(ingredientRepository.getReferenceById(Mockito.any()))
+    @DisplayName("Should throw an exception when trying to delete an ingredient whose ID does not exist")
+    void scenario6() {
+        //given
+        Mockito.when(ingredientRepository.getReferenceById(Mockito.anyLong()))
                 .thenThrow(EntityNotFoundException.class);
-        Assertions.assertThrows(EntityNotFoundException.class, () -> ingredientService.deleteIngredient(1L));
+
+        //when,then
+        Assertions.assertThrows(EntityNotFoundException.class,
+                () -> ingredientService.deleteIngredient(1L));
     }
 
     @AfterEach
     public void closeMocks() throws Exception {
         closeable.close();
+    }
+
+    private IngredientForm createIngredientForm() {
+        return new IngredientForm("apple", TypeOfIngredient.FRUITS);
     }
 }

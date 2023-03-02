@@ -13,20 +13,20 @@ public class RecipeBuilder {
     private Field creatorUserField;
     private Field idField;
 
-    public RecipeBuilder() {
+    private RecipeBuilder() {
         try {
             creatorUserField = Recipe.class.getDeclaredField("creatorUser");
             creatorUserField.setAccessible(true);
             idField = Recipe.class.getDeclaredField("ID");
             idField.setAccessible(true);
+            recipe = new Recipe();
         } catch (NoSuchFieldException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public RecipeBuilder create() {
-        recipe = new Recipe();
-        return this;
+    public static RecipeBuilder builder() {
+        return new RecipeBuilder();
     }
 
     public RecipeBuilder withId(Long id) {
@@ -73,8 +73,6 @@ public class RecipeBuilder {
     }
 
     public Recipe build() {
-        Recipe returnRecipe = recipe;
-        recipe = null;
-        return returnRecipe;
+        return recipe;
     }
 }

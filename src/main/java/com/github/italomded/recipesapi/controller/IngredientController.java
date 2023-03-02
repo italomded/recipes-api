@@ -37,7 +37,7 @@ public class IngredientController {
     @PutMapping("{id}")
     @Secured("ROLE_ADM")
     @Operation(security = { @SecurityRequirement(name = "bearer-key") })
-    public ResponseEntity<IngredientDTO> editRecipe(@PathVariable long id, @RequestBody @Valid IngredientForm form) {
+    public ResponseEntity<IngredientDTO> editIngredient(@PathVariable long id, @RequestBody @Valid IngredientForm form) {
         Ingredient ingredient = ingredientService.editIngredient(id, form);
         return ResponseEntity.ok(new IngredientDTO(ingredient));
     }

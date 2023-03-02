@@ -41,7 +41,7 @@ public class ApplicationUserService {
         verifyIfUserNameAlreadyExists(form);
 
         String passwordEncoded = new BCryptPasswordEncoder().encode(form.password());
-        Role usrRole = roleRepository.getReferenceById(1L);
+        Role usrRole = roleRepository.getReferenceByRepresentation("ROLE_USR");
         ApplicationUser userCreated = new ApplicationUser(form.username(), passwordEncoded, usrRole);
         usrRole.addUser(userCreated);
 
