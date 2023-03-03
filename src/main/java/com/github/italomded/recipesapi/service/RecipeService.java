@@ -68,12 +68,15 @@ public class RecipeService {
         for (RecipeIngredientCreateForm recipeIngredientForm : form.ingredients()) {
             Ingredient ingredient = ingredientRepository.getReferenceById(recipeIngredientForm.getIngredientID());
             Quantity quantity = new Quantity(recipeIngredientForm.getAmount(), recipeIngredientForm.getMeasure());
+
             RecipeIngredient recipeIngredient = new RecipeIngredient(
                     recipe, ingredient, quantity, recipeIngredientForm.getInstruction(),
                     recipeIngredientForm.getPrepareMinutes()
             );
+
             ingredient.addRecipeIngredient(recipeIngredient);
             recipe.addRecipeIngredient(recipeIngredient);
+
             recipeIngredientRepository.save(recipeIngredient);
         }
 

@@ -59,10 +59,11 @@ public class RecipeIngredientService {
 
         Quantity quantity = new Quantity(form.getAmount(), form.getMeasure());
         RecipeIngredient recipeIngredient = new RecipeIngredient(
-                recipe, ingredient, quantity, form.getInstruction(), form.getPrepareMinutes(), form.getSequence()
+                recipe, ingredient, quantity, form.getInstruction(), form.getPrepareMinutes()
                 );
+
         ingredient.addRecipeIngredient(recipeIngredient);
-        recipe.addRecipeIngredient(recipeIngredient);
+        recipe.addRecipeIngredient(recipeIngredient, form.getSequence());
 
         recipeIngredient = recipeIngredientRepository.save(recipeIngredient);
         recipeRepository.save(recipe);

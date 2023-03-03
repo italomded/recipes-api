@@ -33,6 +33,7 @@ public class Recipe {
     private String description;
 
     @Column(nullable = false)
+    @OrderBy("sequence ASC")
     @OneToMany(mappedBy = "recipe", orphanRemoval = true, fetch = FetchType.LAZY)
     private List<RecipeIngredient> ingredientsOfRecipe = new ArrayList<>();
     @ManyToMany(mappedBy = "likedRecipes", fetch = FetchType.LAZY)
@@ -65,28 +66,29 @@ public class Recipe {
     }
 
     public void addRecipeIngredient(RecipeIngredient recipeIngredient) {
-        int amountOfIngredients = ingredientsOfRecipe.size();
-        if (recipeIngredient.getSequence() == null || recipeIngredient.getSequence() > amountOfIngredients) {
-            recipeIngredient.setSequence(amountOfIngredients + 1);
-        } else {
-            for (RecipeIngredient ri : ingredientsOfRecipe) {
-                if (ri.getSequence() >= recipeIngredient.getSequence()) {
-                    ri.setSequence(ri.getSequence() + 1);
-                }
-            }
-        }
         ingredientsOfRecipe.add(recipeIngredient);
+        int index = ingredientsOfRecipe.indexOf(recipeIngredient);
+        recipeIngredient.setSequence(index + 1);
+    }
+
+    public void addRecipeIngredient(RecipeIngredient recipeIngredient, Integer sequence) {
+        try {
+            int indexToBeAdded = sequence - 1;
+            ingredientsOfRecipe.add(indexToBeAdded, recipeIngredient);
+            updateSequences(indexToBeAdded);
+        } catch (IndexOutOfBoundsException e) {
+            addRecipeIngredient(recipeIngredient);
+        }
     }
 
     public boolean removeRecipeIngredient(RecipeIngredient recipeIngredient) {
-        if (!ingredientsOfRecipe.contains(recipeIngredient)) return false;
+        int indexToBeRemoved = ingredientsOfRecipe.indexOf(recipeIngredient);
+        if (indexToBeRemoved < 0) return false;
         if (ingredientsOfRecipe.size() < 4) return false;
-        for (RecipeIngredient ri : ingredientsOfRecipe) {
-            if (ri.getSequence() > recipeIngredient.getSequence()) {
-                ri.setSequence(ri.getSequence() - 1);
-            }
-        }
+
         ingredientsOfRecipe.remove(recipeIngredient);
+        updateSequences(indexToBeRemoved);
+
         return true;
     }
 
@@ -101,5 +103,12 @@ public class Recipe {
 
     public Set<ApplicationUser> getUsersThatLiked() {
         return Collections.unmodifiableSet(usersWhoLiked);
+    }
+
+    private void updateSequences(Integer actualIndexRefactor) {
+        for (int index = actualIndexRefactor; index < ingredientsOfRecipe.size(); index++) {
+            var recipeIngredient = ingredientsOfRecipe.get(index);
+            recipeIngredient.setSequence(index + 1);
+        }
     }
 }

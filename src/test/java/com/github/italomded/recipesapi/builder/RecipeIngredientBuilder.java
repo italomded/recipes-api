@@ -46,6 +46,11 @@ public class RecipeIngredientBuilder {
         }
     }
 
+    public RecipeIngredientBuilder withSequence(Integer sequence) {
+        recipeIngredient.setSequence(sequence);
+        return this;
+    }
+
     public RecipeIngredient build() {
         return recipeIngredient;
     }

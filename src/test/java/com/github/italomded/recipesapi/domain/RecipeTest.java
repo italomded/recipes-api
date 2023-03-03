@@ -1,5 +1,9 @@
 package com.github.italomded.recipesapi.domain;
 
+import com.github.italomded.recipesapi.builder.ApplicationUserBuilder;
+import com.github.italomded.recipesapi.builder.ImageBuilder;
+import com.github.italomded.recipesapi.builder.RecipeBuilder;
+import com.github.italomded.recipesapi.builder.RecipeIngredientBuilder;
 import com.github.italomded.recipesapi.domain.recipe.Image;
 import com.github.italomded.recipesapi.domain.recipe.Recipe;
 import com.github.italomded.recipesapi.domain.recipe.RecipeIngredient;
@@ -10,137 +14,121 @@ import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class RecipeTest {
     private Recipe recipe;
-    private Field recipeIngredientID;
-
-    @BeforeAll
-    public void getIdField() throws NoSuchFieldException {
-        recipeIngredientID = RecipeIngredient.class.getDeclaredField("ID");
-        recipeIngredientID.setAccessible(true);
-    }
 
     @BeforeEach
-    public void createRecipe() throws IllegalAccessException {
-        recipe = new Recipe();
-        List<RecipeIngredient> recipeIngredients = Arrays.asList(new RecipeIngredient(), new RecipeIngredient(), new RecipeIngredient());
-
-        int counter = 0;
-        for (RecipeIngredient recipeIngredient : recipeIngredients) {
-            int x = ++counter;
-            recipeIngredient.setSequence(x);
-            recipeIngredientID.set(recipeIngredient, (long) x);
-            recipe.addRecipeIngredient(recipeIngredient);
-        }
+    public void createRecipe() {
+        recipe = RecipeBuilder.builder()
+                .withId(1L)
+                .withRecipeIngredient(RecipeIngredientBuilder.builder().withId(1L).withSequence(1).build())
+                .withRecipeIngredient(RecipeIngredientBuilder.builder().withId(2L).withSequence(2).build())
+                .withRecipeIngredient(RecipeIngredientBuilder.builder().withId(3L).withSequence(3).build())
+                .withRecipeIngredient(RecipeIngredientBuilder.builder().withId(4L).withSequence(4).build())
+                .build();
     }
 
     @Test
-    void shouldRemoveAndReorganizeRecipeIngredients() throws IllegalAccessException {
+    @DisplayName("Should reorganize recipe ingredients after a middle remove")
+    void scenario1() {
+        //given
         RecipeIngredient recipeIngredient = recipe.getIngredientsOfRecipe().get(1);
-        RecipeIngredient recipeIngredientToAdd = new RecipeIngredient();
-        recipeIngredientID.set(recipeIngredientToAdd, 10L);
-        recipe.addRecipeIngredient(recipeIngredientToAdd);
+
+        //when
         boolean result = recipe.removeRecipeIngredient(recipeIngredient);
 
+        //then
         Assertions.assertEquals(true, result);
         Assertions.assertEquals(3, recipe.getIngredientsOfRecipe().size());
-        Assertions.assertEquals(1, recipe.getIngredientsOfRecipe().get(0).getSequence());
-        Assertions.assertEquals(2, recipe.getIngredientsOfRecipe().get(1).getSequence());
-        Assertions.assertEquals(3, recipe.getIngredientsOfRecipe().get(2).getSequence());
+        validateSequence(recipe.getIngredientsOfRecipe());
+    }
 
-        recipeIngredient = recipe.getIngredientsOfRecipe().get(0);
+    @Test
+    @DisplayName("Should reorganize recipe ingredients after a first element remove")
+    void scenario2() {
+        //given
+        RecipeIngredient recipeIngredient = recipe.getIngredientsOfRecipe().get(0);
+
+        //when
         recipe.removeRecipeIngredient(recipeIngredient);
 
-        Assertions.assertEquals(1, recipe.getIngredientsOfRecipe().get(0).getSequence());
+        //then
+        validateSequence(recipe.getIngredientsOfRecipe());
     }
 
     @Test
-    void shouldNotRemoveImagesIfHaveOnlyThree() {
-        RecipeIngredient recipeIngredient = recipe.getIngredientsOfRecipe().get(1);
-        boolean result = recipe.removeRecipeIngredient(recipeIngredient);
+    @DisplayName("Should don't remove a recipe ingredient if the list has only 3 elements")
+    void scenario3() {
+        //given
+        RecipeIngredient recipeIngredientSuccessfully = recipe.getIngredientsOfRecipe().get(0);
+        RecipeIngredient recipeIngredientFail = recipe.getIngredientsOfRecipe().get(1);
+
+        //when
+        boolean result = recipe.removeRecipeIngredient(recipeIngredientSuccessfully);
+        boolean secondResult = recipe.removeRecipeIngredient(recipeIngredientFail);
+
+        //then
         Assertions.assertEquals(3, recipe.getIngredientsOfRecipe().size());
-        Assertions.assertEquals(false, result);
+        Assertions.assertEquals(true, result);
+        Assertions.assertEquals(false, secondResult);
     }
 
     @Test
-    void shouldAddNewIngredientAndReorganizeRecipeIngredients() throws IllegalAccessException {
-        RecipeIngredient recipeIngredient1 = new RecipeIngredient();
-        recipeIngredientID.set(recipeIngredient1, 4L);
-        recipeIngredient1.setSequence(4);
+    @DisplayName("Should add new recipe ingredients at any position on the list and reorganize the sequence")
+    void scenario4() {
+        //given
+        RecipeIngredient recipeIngredientAtMiddle = RecipeIngredientBuilder.builder().withId(5L).withSequence(2).build();
+        RecipeIngredient recipeIngredientAtStart = RecipeIngredientBuilder.builder().withId(6L).withSequence(1).build();
+        RecipeIngredient recipeIngredientAtEnd = RecipeIngredientBuilder.builder().withId(7L).withSequence(5).build();
+        RecipeIngredient recipeIngredientAtAny = RecipeIngredientBuilder.builder().withId(8L).withSequence(50).build();
 
-        RecipeIngredient recipeIngredient2 = new RecipeIngredient();
-        recipeIngredientID.set(recipeIngredient2, 5L);
-        recipeIngredient2.setSequence(37);
+        //when
+        recipe.addRecipeIngredient(recipeIngredientAtMiddle, recipeIngredientAtMiddle.getSequence());
+        recipe.addRecipeIngredient(recipeIngredientAtStart, recipeIngredientAtStart.getSequence());
+        recipe.addRecipeIngredient(recipeIngredientAtEnd, recipeIngredientAtEnd.getSequence());
+        recipe.addRecipeIngredient(recipeIngredientAtAny, recipeIngredientAtAny.getSequence());
 
-        RecipeIngredient recipeIngredient3 = new RecipeIngredient();
-        recipeIngredientID.set(recipeIngredient3, 6L);
-
-        recipe.addRecipeIngredient(recipeIngredient1);
-        recipe.addRecipeIngredient(recipeIngredient2);
-        recipe.addRecipeIngredient(recipeIngredient3);
-
-        Assertions.assertEquals(6, recipe.getIngredientsOfRecipe().size());
-        Assertions.assertEquals(recipeIngredient1, recipe.getIngredientsOfRecipe().get(3));
-        Assertions.assertEquals(recipeIngredient2, recipe.getIngredientsOfRecipe().get(4));
-        Assertions.assertEquals(5, recipe.getIngredientsOfRecipe().get(4).getSequence());
-        Assertions.assertEquals(6, recipe.getIngredientsOfRecipe().get(5).getSequence());
+        //then
+        Assertions.assertEquals(8, recipe.getIngredientsOfRecipe().size());
+        validateSequence(recipe.getIngredientsOfRecipe());
     }
 
     @Test
-    void shouldAddNewIngredientAtAnyPositionOfRecipeIngredientsList() throws IllegalAccessException {
-        RecipeIngredient recipeIngredientAtMiddle = new RecipeIngredient();
-        recipeIngredientID.set(recipeIngredientAtMiddle, 4L);
-        recipeIngredientAtMiddle.setSequence(2);
+    @DisplayName("Should like and unlike a recipe")
+    void scenario5() {
+        //given
+        Recipe recipe = RecipeBuilder.builder().withId(1L).build();
+        ApplicationUser user = ApplicationUserBuilder.builder().withId(1L).build();
 
-        RecipeIngredient recipeIngredientAtStart = new RecipeIngredient();
-        recipeIngredientID.set(recipeIngredientAtStart, 5L);
-        recipeIngredientAtStart.setSequence(1);
-
-        RecipeIngredient recipeIngredientAtEnd = new RecipeIngredient();
-        recipeIngredientID.set(recipeIngredientAtEnd, 6L);
-        recipeIngredientAtEnd.setSequence(5);
-
-        recipe.addRecipeIngredient(recipeIngredientAtMiddle);
-        recipe.addRecipeIngredient(recipeIngredientAtStart);
-        recipe.addRecipeIngredient(recipeIngredientAtEnd);
-
-        Assertions.assertEquals(6, recipe.getIngredientsOfRecipe().size());
-        int counter = 0;
-        for (RecipeIngredient recipeIngredient : recipe.getIngredientsOfRecipe()) {
-            counter += recipeIngredient.getSequence();
-            System.out.println(recipeIngredient.getSequence());
-        }
-        Assertions.assertEquals(21, counter);
-    }
-
-    @Test
-    void shouldAddWithSequenceOneIfListOfRecipeIngredientsIsNull() {
-        Recipe recipeEmpty = new Recipe();
-        recipeEmpty.addRecipeIngredient(new RecipeIngredient());
-        Assertions.assertEquals(1, recipeEmpty.getIngredientsOfRecipe().size());
-        Assertions.assertEquals(1, recipeEmpty.getIngredientsOfRecipe().get(0).getSequence());
-    }
-
-    @Test
-    void shouldLikeAndUnlikeARecipe() {
-        Recipe recipe = new Recipe();
-        ApplicationUser user = new ApplicationUser();
+        //when
         recipe.likeRecipe(user);
-
-        Assertions.assertEquals(1, recipe.getLikes());
+        int likes1moment = recipe.getLikes();
         recipe.likeRecipe(user);
+        int likes2moment = recipe.getLikes();
 
-        Assertions.assertEquals(0, recipe.getLikes());
+        //then
+        Assertions.assertEquals(1, likes1moment);
+        Assertions.assertEquals(0, likes2moment);
     }
 
     @Test
-    void shouldNotRemoveTheImageIfItIsTheOnlyFormOfTheRecipe() {
-        Recipe recipe = new Recipe();
-        Image image = new Image();
-        recipe.addImage(image);
+    @DisplayName("Should not remove the image of the recipe if she as the only")
+    void scenario6() {
+        //given
+        Image image = ImageBuilder.builder().withId(1L).build();
+        Recipe recipe = RecipeBuilder.builder().withId(1L).withImage(image).build();
 
+        //when
+        boolean removed = recipe.removeImage(image);
+
+        //then
+        Assertions.assertFalse(removed);
         Assertions.assertEquals(1, recipe.getImages().size());
-        Assertions.assertFalse(recipe.removeImage(image));
+    }
+
+    private void validateSequence(List<RecipeIngredient> ingredientsOfRecipe) {
+        for (int index = 0; index < ingredientsOfRecipe.size() ; index++) {
+            Assertions.assertEquals(index + 1, ingredientsOfRecipe.get(index).getSequence());
+        }
     }
 }
