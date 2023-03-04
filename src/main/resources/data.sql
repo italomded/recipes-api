@@ -1,4 +1,3 @@
-USE recipes_db;
 START TRANSACTION;
 
 INSERT INTO ingredient (id, name, category) VALUES (1, 'Apple', 'FRUITS');
@@ -31,6 +30,7 @@ INSERT INTO recipe (id, description, title, creator_user_id) VALUES (2, 'A good 
 INSERT INTO recipe (id, description, title, creator_user_id) VALUES (3, 'A good recipe', 'Simple recipe', 3);
 INSERT INTO recipe (id, description, title, creator_user_id) VALUES (4, 'A good recipe', 'Simple recipe', 4);
 INSERT INTO recipe (id, description, title, creator_user_id) VALUES (5, 'A good recipe', 'Simple recipe', 5);
+INSERT INTO recipe (id, description, title, creator_user_id) VALUES (6, 'A good recipe', 'Simple recipe', 5);
 
 INSERT INTO recipe_ingredient (id, instruction, prepare_minutes, amount, measure, `sequence`, ingredient_id, recipe_id)
 	VALUES (1, 'Do this and to that', 4, 20, 'MG', 1, 1, 1);
@@ -87,6 +87,13 @@ INSERT INTO recipe_ingredient (id, instruction, prepare_minutes, amount, measure
 INSERT INTO recipe_ingredient (id, instruction, prepare_minutes, amount, measure, `sequence`, ingredient_id, recipe_id)
 	VALUES (25, 'Do this and to that', 7, 1, 'L', 5, 5, 5);
 
+INSERT INTO recipe_ingredient (id, instruction, prepare_minutes, amount, measure, `sequence`, ingredient_id, recipe_id)
+	VALUES (26, 'Do this and to that', 4, 20, 'MG', 1, 1, 6);
+INSERT INTO recipe_ingredient (id, instruction, prepare_minutes, amount, measure, `sequence`, ingredient_id, recipe_id)
+	VALUES (27, 'Do this and to that', 3, 3, 'KG', 2, 2, 6);
+INSERT INTO recipe_ingredient (id, instruction, prepare_minutes, amount, measure, `sequence`, ingredient_id, recipe_id)
+	VALUES (28, 'Do this and to that', 1, 300, 'ML', 3, 3, 6);
+
 INSERT INTO image (id, link, recipe_id) VALUES(1, "www.someimages.com/niceimage", 1);
 INSERT INTO image (id, link, recipe_id) VALUES(2, "www.someimages.com/niceimage", 1);
 INSERT INTO image (id, link, recipe_id) VALUES(3, "www.someimages.com/niceimage", 2);
@@ -99,9 +106,15 @@ INSERT INTO image (id, link, recipe_id) VALUES(9, "www.someimages.com/niceimage"
 INSERT INTO image (id, link, recipe_id) VALUES(10,"www.someimages.com/niceimage", 5);
 
 INSERT INTO user_like_recipe (user_id, recipe_id) VALUES(6, 1);
+INSERT INTO user_like_recipe (user_id, recipe_id) VALUES(7, 1);
 INSERT INTO user_like_recipe (user_id, recipe_id) VALUES(7, 2);
 INSERT INTO user_like_recipe (user_id, recipe_id) VALUES(8, 3);
+INSERT INTO user_like_recipe (user_id, recipe_id) VALUES(6, 3);
+INSERT INTO user_like_recipe (user_id, recipe_id) VALUES(7, 3);
+INSERT INTO user_like_recipe (user_id, recipe_id) VALUES(10, 3);
 INSERT INTO user_like_recipe (user_id, recipe_id) VALUES(9, 4);
 INSERT INTO user_like_recipe (user_id, recipe_id) VALUES(10, 5);
+INSERT INTO user_like_recipe (user_id, recipe_id) VALUES(5, 5);
+INSERT INTO user_like_recipe (user_id, recipe_id) VALUES(6, 5);
 
 COMMIT;

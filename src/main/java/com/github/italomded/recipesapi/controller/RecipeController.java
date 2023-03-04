@@ -18,7 +18,10 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.support.PageableUtils;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -26,6 +29,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
+import java.util.Arrays;
 
 @RestController
 @RequestMapping("api/recipes")
@@ -42,10 +46,17 @@ public class RecipeController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<RecipeDTO>> getAllRecipes(Pageable pageable) {
-        Page<Recipe> allRecipes = recipeService.getAllRecipes(pageable);
-        Page<RecipeDTO> allRecipesDTO = allRecipes.map(RecipeDTO::new);
-        return ResponseEntity.ok(allRecipesDTO);
+    public ResponseEntity<Page<RecipeDTO>> getRecipes(
+            @PageableDefault(sort = {"usersWhoLiked"}) Pageable pageable, @RequestParam(required = false) Long[] ingredients) {
+        Page<Recipe> recipes;
+        if (ingredients == null) {
+            recipes = recipeService.getAllRecipes(pageable);
+        } else {
+            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
+            recipes = recipeService.getRecipesByIngredients(pageable, ingredients);
+        }
+        Page<RecipeDTO> recipesDTO = recipes.map(RecipeDTO::new);
+        return ResponseEntity.ok(recipesDTO);
     }
 
     @GetMapping("user/{userId}")
@@ -78,7 +89,7 @@ public class RecipeController {
     }
 
     @PutMapping("{id}")
-    @Operation(security = { @SecurityRequirement(name = "bearer-key") })
+    @Operation(security = {@SecurityRequirement(name = "bearer-key")})
     public ResponseEntity<RecipeDTO> editRecipe(@PathVariable long id, @RequestBody @Valid RecipeEditForm form) {
         ApplicationUser user = (ApplicationUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Recipe recipe = recipeService.editRecipe(id, form, user);
@@ -86,7 +97,7 @@ public class RecipeController {
     }
 
     @PatchMapping("{id}")
-    @Operation(security = { @SecurityRequirement(name = "bearer-key") })
+    @Operation(security = {@SecurityRequirement(name = "bearer-key")})
     public ResponseEntity likeRecipe(@PathVariable long id) {
         ApplicationUser user = (ApplicationUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         recipeService.likeRecipe(id, user);
@@ -94,7 +105,7 @@ public class RecipeController {
     }
 
     @PostMapping
-    @Operation(security = { @SecurityRequirement(name = "bearer-key") })
+    @Operation(security = {@SecurityRequirement(name = "bearer-key")})
     public ResponseEntity<RecipeDTO> createRecipe(@RequestBody @Valid RecipeCreateForm form, UriComponentsBuilder uriComponentsBuilder) {
         ApplicationUser user = (ApplicationUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Recipe recipe = recipeService.createRecipe(form, user);
@@ -103,7 +114,7 @@ public class RecipeController {
     }
 
     @DeleteMapping("{id}")
-    @Operation(security = { @SecurityRequirement(name = "bearer-key") })
+    @Operation(security = {@SecurityRequirement(name = "bearer-key")})
     public ResponseEntity deleteRecipe(@PathVariable long id) {
         ApplicationUser user = (ApplicationUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         recipeService.deleteRecipe(id, user);

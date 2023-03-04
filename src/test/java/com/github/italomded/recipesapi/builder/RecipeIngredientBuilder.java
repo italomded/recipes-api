@@ -1,6 +1,7 @@
 package com.github.italomded.recipesapi.builder;
 
 import com.github.italomded.recipesapi.domain.recipe.Ingredient;
+import com.github.italomded.recipesapi.domain.recipe.Quantity;
 import com.github.italomded.recipesapi.domain.recipe.Recipe;
 import com.github.italomded.recipesapi.domain.recipe.RecipeIngredient;
 
@@ -11,6 +12,8 @@ public class RecipeIngredientBuilder {
 
     private Field recipeField;
     private Field idField;
+    private Field ingredientField;
+    private Field quantityField;
 
     private RecipeIngredientBuilder() {
         try {
@@ -18,6 +21,10 @@ public class RecipeIngredientBuilder {
             idField.setAccessible(true);
             recipeField = RecipeIngredient.class.getDeclaredField("recipe");
             recipeField.setAccessible(true);
+            ingredientField = RecipeIngredient.class.getDeclaredField("ingredient");
+            ingredientField.setAccessible(true);
+            quantityField = RecipeIngredient.class.getDeclaredField("quantity");
+            quantityField.setAccessible(true);
             recipeIngredient = new RecipeIngredient();
         } catch (NoSuchFieldException e) {
             throw new RuntimeException(e);
@@ -48,6 +55,34 @@ public class RecipeIngredientBuilder {
 
     public RecipeIngredientBuilder withSequence(Integer sequence) {
         recipeIngredient.setSequence(sequence);
+        return this;
+    }
+
+    public RecipeIngredientBuilder withIngredient(Ingredient ingredient) {
+        try {
+            ingredientField.set(recipeIngredient, ingredient);
+            return this;
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public RecipeIngredientBuilder withQuantity(Quantity quantity) {
+        try {
+            quantityField.set(recipeIngredient, quantity);
+            return this;
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public RecipeIngredientBuilder withPrepareMinutes(Integer prepareMinutes) {
+        recipeIngredient.setPrepareMinutes(prepareMinutes);
+        return this;
+    }
+
+    public RecipeIngredientBuilder withInstruction(String instruction) {
+        recipeIngredient.setInstruction(instruction);
         return this;
     }
 

@@ -34,6 +34,10 @@ public class RecipeService {
         return recipeRepository.findAll(pageable);
     }
 
+    public Page<Recipe> getRecipesByIngredients(Pageable pageable, Long[] ingredientsID) {
+        return recipeRepository.findByIngredients(ingredientsID,  pageable);
+    }
+
     public Page<Recipe> getRecipesByUserId(Pageable pageable, Long userID) {
         return recipeRepository.findByCreatorUser_ID(userID, pageable);
     }

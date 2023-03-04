@@ -9,11 +9,14 @@ public class ApplicationUserBuilder {
     private ApplicationUser applicationUser;
 
     private Field idField;
+    private Field usernameField;
 
     private ApplicationUserBuilder() {
         try {
             idField = ApplicationUser.class.getDeclaredField("ID");
             idField.setAccessible(true);
+            usernameField = ApplicationUser.class.getDeclaredField("username");
+            usernameField.setAccessible(true);
             applicationUser = new ApplicationUser();
         } catch (NoSuchFieldException e) {
             throw new RuntimeException(e);
@@ -41,6 +44,15 @@ public class ApplicationUserBuilder {
     public ApplicationUserBuilder withRole(Role role) {
         applicationUser.setRole(role);
         return this;
+    }
+
+    public ApplicationUserBuilder withUsername(String username) {
+        try {
+            usernameField.set(applicationUser, username);
+            return this;
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public ApplicationUser build() {

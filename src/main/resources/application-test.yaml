@@ -1,0 +1,9 @@
+spring:
+  datasource:
+    url: jdbc:mysql://${API_DATASOURCE_URL:localhost}:${API_DATASOURCE_PORT:3306}/recipes_db_test?createDatabaseIfNotExist=true
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+  sql:
+    init:
+      mode: never
