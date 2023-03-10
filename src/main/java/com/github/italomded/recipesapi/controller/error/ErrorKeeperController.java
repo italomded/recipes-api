@@ -13,7 +13,9 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @RestControllerAdvice
 public class ErrorKeeperController {
@@ -37,8 +39,22 @@ public class ErrorKeeperController {
 
     @ExceptionHandler(value = {EntityNotFoundException.class, PropertyReferenceException.class})
     public ResponseEntity error404Many(Exception exception) {
-        String message = exception.getMessage().replace("com.github.italomded.recipesapi.domain.user.", "");
-        message = message.replace("com.github.italomded.recipesapi.domain.recipe.", "");
+        String message = exception.getMessage();
+
+        Optional<String> optionalFullyQualifiedName = Arrays.stream(message.split(" "))
+                .filter(s -> s.contains("com.github.italomded"))
+                .findAny();
+
+        if (optionalFullyQualifiedName.isPresent()) {
+            try {
+                String fullyQualifiedName = optionalFullyQualifiedName.get();
+                String classSimpleName = Class.forName(fullyQualifiedName).getSimpleName();
+                message = message.replace(fullyQualifiedName, classSimpleName);
+            } catch (ClassNotFoundException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new SimpleErrorResponseDTO(message));
     }
 }
